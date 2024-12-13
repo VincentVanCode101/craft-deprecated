@@ -1,0 +1,5 @@
+services:
+  go-compiler:
+    build: .
+    volumes:
+      - .:/app

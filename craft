@@ -1,0 +1,11 @@
+#!/bin/bash
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+IMAGE_NAME="craft-image"
+
+docker run --rm \
+  -v "$(pwd):/app" \
+  -u "$(id -u):$(id -g)" \
+  "$IMAGE_NAME" \
+  "$@"
