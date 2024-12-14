@@ -1,4 +1,4 @@
-BINARY_NAME := craft
+BINARY_NAME := crafter
 MAIN_PACKAGE := ./main.go
 
 .PHONY: all build run clean

@@ -21,6 +21,10 @@ func Execute() error {
 	return rootCmd.Execute()
 }
 
+type Handler interface {
+	Run() error
+}
+
 // NewRootCmd creates the root command.
 func NewRootCmd() *cobra.Command {
 	programName := strings.TrimPrefix(os.Args[0], "./")
@@ -37,8 +41,12 @@ func NewRootCmd() *cobra.Command {
 					return err
 				}
 
-				// Perform the desired action
 				fmt.Printf("Performing '%s' operation in '%s' language\n", operation, language)
+				handler, err := getHandler(operation, language)
+				if err != nil {
+					return err
+				}
+				handler.Run()
 
 				return nil
 			}
@@ -52,6 +60,28 @@ func NewRootCmd() *cobra.Command {
 	rootCmd.Flags().StringVarP(&language, "language", "l", "", fmt.Sprintf("Specify the language for the project (Allowed: %s)", strings.Join(constants.AllowedLanguages, ", ")))
 
 	return rootCmd
+}
+
+func getHandler(operation, language string) (Handler, error) {
+	switch operation {
+	case "new":
+		{
+			switch language {
+			case "Go":
+				return createGoHandler{}, nil
+			}
+		}
+
+	}
+	return nil, nil
+}
+
+type createGoHandler struct{}
+
+func (h createGoHandler) Run() error {
+	fmt.Println("Building a Go project...")
+	// Logic for building a Go project
+	return nil
 }
 
 // validateFlags ensures that the provided flag values are within the allowed set.

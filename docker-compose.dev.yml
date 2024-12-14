@@ -1,0 +1,8 @@
+services:
+  go-compiler:
+    build:
+      context: .
+      target: dev
+    volumes:
+      - .:/app
+    entrypoint: ["tail", "-f", "/dev/null"]

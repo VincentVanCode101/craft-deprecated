@@ -1,9 +1,11 @@
-#!/bin/bash
+#!/usr/bin/env bash
+
+set -e
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 echo "Building the craft Docker image..."
-docker build -t craft-image "$SCRIPT_DIR"
+docker build -t craft-image "$SCRIPT_DIR" || { echo "Docker build failed"; exit 1; }
 
 echo "Adding the craft script to your PATH..."
 chmod +x "$SCRIPT_DIR/craft"

@@ -1,16 +1,25 @@
-FROM golang:latest AS builder
+FROM golang:1.23.3 AS dev
 
 WORKDIR /app
+
 COPY . .
 
-RUN CGO_ENABLED=0 GOOS=linux go build -o craft .
-
-FROM debian:bullseye-slim AS runtime
+FROM golang:1.23.3 AS builder
 
 WORKDIR /app
 
-COPY --from=builder /app/craft /usr/local/bin/craft
+COPY go.mod go.sum ./
 
-VOLUME /app
+RUN go mod download
 
-ENTRYPOINT ["craft"]
+COPY . .
+
+RUN CGO_ENABLED=0 GOOS=linux go build -o crafter .
+
+FROM scratch
+
+COPY --from=builder /app/crafter /usr/local/bin/crafter
+
+USER 65532:65532
+
+ENTRYPOINT ["crafter"]
