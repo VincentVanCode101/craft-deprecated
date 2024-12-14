@@ -1,8 +1,12 @@
+name: craft
+
 services:
   go-compiler:
+    container_name: ${COMPOSE_PROJECT_NAME}-go-compiler
     build:
       context: .
       target: dev
+    image: ${COMPOSE_PROJECT_NAME}-go-compiler:latest
     volumes:
       - .:/app
     entrypoint: ["tail", "-f", "/dev/null"]

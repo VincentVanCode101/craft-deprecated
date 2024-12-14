@@ -1,97 +1,68 @@
 package cmd
 
 import (
+	"craft/internal/constants"
 	"fmt"
-	"os"
-	"strings"
 
 	"github.com/spf13/cobra"
-
-	"craft/internal/constants"
 )
 
-var (
-	operation string
-	language  string
-)
-
-// Execute initializes and runs the root command.
-func Execute() error {
-	rootCmd := NewRootCmd()
-	return rootCmd.Execute()
-}
-
-type Handler interface {
-	Run() error
-}
-
-// NewRootCmd creates the root command.
 func NewRootCmd() *cobra.Command {
-	programName := strings.TrimPrefix(os.Args[0], "./")
+	programName := "craft"
+
+	var showOptions bool // Flag variable
 
 	rootCmd := &cobra.Command{
-		Use:   programName,
+		Use:   fmt.Sprintf("%s <operation> <language>", programName),
 		Short: "A CLI tool with autocompletion support",
 		Long:  fmt.Sprintf("This tool provides operations and language management with autocompletion for different shells. Run `%s help` for details.", programName),
+		Args:  cobra.MaximumNArgs(2), // Allow 0 to 2 arguments
 		RunE: func(cmd *cobra.Command, args []string) error {
-			// Check if both flags are provided
-			if operation != "" && language != "" {
-
-				if err := validateFlags(operation, language); err != nil {
-					return err
-				}
-
-				fmt.Printf("Performing '%s' operation in '%s' language\n", operation, language)
-				handler, err := getHandler(operation, language)
-				if err != nil {
-					return err
-				}
-				handler.Run()
-
+			// Check if the showOptions flag is set
+			if showOptions {
+				showAllowedOptions()
 				return nil
 			}
 
-			return cmd.Help()
+			if len(args) == 0 {
+				return cmd.Help()
+			}
+
+			// Ensure exactly 2 arguments for operation and language
+			if len(args) != 2 {
+				return fmt.Errorf("invalid usage: you must specify both an operation and a language. Run '%s --help' for details", programName)
+			}
+
+			operation := args[0]
+			language := args[1]
+
+			// Validate operation and language
+			err := constants.ValidateOperationAndLanguage(operation, language)
+			if err != nil {
+				fmt.Println(err)
+			} else {
+				fmt.Println("Operation and language are valid!")
+			}
+
+			handler, err := getHandler(operation, language)
+			if err != nil {
+				return err
+			}
+			handler.Run()
+
+			return nil
 		},
 		SilenceUsage: true,
 	}
 
-	rootCmd.Flags().StringVarP(&operation, "operation", "o", "", fmt.Sprintf("Specify the operation to perform (Allowed: %s)", strings.Join(constants.AllowedOperations, ", ")))
-	rootCmd.Flags().StringVarP(&language, "language", "l", "", fmt.Sprintf("Specify the language for the project (Allowed: %s)", strings.Join(constants.AllowedLanguages, ", ")))
+	rootCmd.Flags().BoolVarP(&showOptions, "show-options", "s", false, "Show allowed operations and languages")
 
 	return rootCmd
 }
 
-func getHandler(operation, language string) (Handler, error) {
-	switch operation {
-	case "new":
-		{
-			switch language {
-			case "Go":
-				return createGoHandler{}, nil
-			}
-		}
-
+func showAllowedOptions() {
+	fmt.Println("Allowed Operations and Languages:")
+	for operation, languages := range constants.AllowedOperationsWithLanguages {
+		fmt.Printf("- %s: %v\n", operation, languages)
 	}
-	return nil, nil
-}
-
-type createGoHandler struct{}
-
-func (h createGoHandler) Run() error {
-	fmt.Println("Building a Go project...")
-	// Logic for building a Go project
-	return nil
-}
-
-// validateFlags ensures that the provided flag values are within the allowed set.
-func validateFlags(operation, language string) error {
-	if !constants.IsValidOperation(operation) {
-		return fmt.Errorf("invalid operation: %s. Allowed operations are: %s", operation, strings.Join(constants.AllowedOperations, ", "))
-	}
-
-	if !constants.IsValidLanguage(language) {
-		return fmt.Errorf("invalid language: %s. Allowed languages are: %s", language, strings.Join(constants.AllowedLanguages, ", "))
-	}
-	return nil
 }

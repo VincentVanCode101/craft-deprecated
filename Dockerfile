@@ -1,5 +1,7 @@
 FROM golang:1.23.3 AS dev
 
+RUN go install golang.org/x/lint/golint@latest
+
 WORKDIR /app
 
 COPY . .

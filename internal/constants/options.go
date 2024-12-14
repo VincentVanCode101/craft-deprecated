@@ -1,8 +1,12 @@
 package constants
 
+import "fmt"
+
 var (
-	AllowedOperations = []string{"new"}
-	AllowedLanguages  = []string{"Go", "Rust"}
+	AllowedOperationsWithLanguages = map[string][]string{
+		"new":  {"Go", "Java"},
+		"scan": {"Go"},
+	}
 )
 
 // contains checks if a slice contains a specific string.
@@ -15,12 +19,25 @@ func contains(slice []string, item string) bool {
 	return false
 }
 
-// IsValidOperation checks if the operation is allowed.
-func IsValidOperation(operation string) bool {
-	return contains(AllowedOperations, operation)
+// ValidateOperationAndLanguage checks if the operation and language are valid
+// and returns detailed error messages.
+func ValidateOperationAndLanguage(operation, language string) error {
+	arr, foundOperation := AllowedOperationsWithLanguages[operation]
+	if !foundOperation {
+		return fmt.Errorf("operation '%s' is not allowed. Allowed operations are: %v", operation, allowedOperations())
+	}
+
+	if !contains(arr, language) {
+		return fmt.Errorf("operation '%s' cannot be performed with language '%s'. Allowed languages for this operation are: %v", operation, language, arr)
+	}
+
+	return nil
 }
 
-// IsValidLanguage checks if the language is allowed.
-func IsValidLanguage(language string) bool {
-	return contains(AllowedLanguages, language)
+func allowedOperations() []string {
+	keys := make([]string, 0, len(AllowedOperationsWithLanguages))
+	for key := range AllowedOperationsWithLanguages {
+		keys = append(keys, key)
+	}
+	return keys
 }

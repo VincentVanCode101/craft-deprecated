@@ -1,0 +1,77 @@
+#!/usr/bin/env bash
+
+RED="\033[31m"
+GREEN="\033[32m"
+BLUE="\033[34m"
+YELLOW="\033[33m"
+RESET="\033[0m"
+
+color_output() {
+    local color="$1"
+    local message="$2"
+    echo -e "${color}${message}${RESET}"
+}
+
+COMPOSE_FILE="docker-compose.dev.yml"
+if [ ! -f "$COMPOSE_FILE" ]; then
+    color_output "$RED" "Error: $COMPOSE_FILE not found."
+    exit 1
+fi
+
+if ! command -v yq &> /dev/null; then
+    color_output "$RED" "Error: yq is not installed. Please install it first."
+    exit 1
+fi
+
+CONTAINER_NAME=$(yq eval '.services.*.container_name' "$COMPOSE_FILE" | head -n 1)
+
+if [ -z "$CONTAINER_NAME" ]; then
+    color_output "$RED" "Error: No container name found in $COMPOSE_FILE."
+    exit 1
+fi
+
+color_output "$BLUE" "Using container: $CONTAINER_NAME"
+
+if ! docker ps --filter "name=$CONTAINER_NAME" --format "{{.Names}}" | grep -q "^$CONTAINER_NAME$"; then
+    color_output "$RED" "Error: Container '$CONTAINER_NAME' is not running."
+    exit 1
+fi
+
+color_output "$BLUE" "Running golint and gofmt..."
+
+LINT_OUTPUT=$(docker exec "$CONTAINER_NAME" sh -c "
+    if [ ! -x /go/bin/golint ]; then
+        echo 'Error: golint is not installed or not executable in the container.'
+        exit 1
+    fi
+
+    /go/bin/golint ./...
+")
+
+if [ -n "$LINT_OUTPUT" ]; then
+    color_output "$RED" "golint detected issues:"
+    echo "$LINT_OUTPUT"
+    exit 1
+else
+    color_output "$GREEN" "golint passed."
+fi
+
+FMT_OUTPUT=$(docker exec "$CONTAINER_NAME" sh -c "
+    if [ ! -x /usr/local/go/bin/gofmt ]; then
+        echo 'Error: gofmt is not installed in the container.'
+        exit 1
+    fi
+
+    gofmt -l .
+")
+
+if [ -n "$FMT_OUTPUT" ]; then
+    color_output "$RED" "gofmt detected improperly formatted files:"
+    echo "$FMT_OUTPUT"
+    exit 1
+else
+    color_output "$GREEN" "gofmt passed."
+fi
+
+color_output "$GREEN" "Pre-commit checks passed!"
+exit 0
