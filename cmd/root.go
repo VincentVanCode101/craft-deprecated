@@ -7,8 +7,8 @@ import (
 func NewRootCmd() *cobra.Command {
 	rootCmd := &cobra.Command{
 		Use:   "craft",
-		Short: "A CLI tool with autocompletion support",
-		Long:  "This tool provides operations and language management with autocompletion for different shells. Run `craft help` for details.",
+		Short: "A CLI tool to help bootstrap new Projects ",
+		Long:  "This tool helps create new projects quickly by generating boilerplate code for a specified language or framework. Everything is configured to ensure the project runs seamlessly in a Docker container. Run craft help for more details.",
 	}
 
 	rootCmd.AddCommand(NewNewCmd())
