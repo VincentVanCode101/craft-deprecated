@@ -2,8 +2,11 @@
 
 IMAGE_NAME="craft-exec:latest"
 
+FOLDER_NAME=$(basename "$(pwd)")
+
 docker run --rm \
-  -v "$(pwd):/app" \
+  -v "$(pwd):/${FOLDER_NAME}" \
   -u "$(id -u):$(id -g)" \
+  -w "/${FOLDER_NAME}" \
   "$IMAGE_NAME" \
   "$@"
