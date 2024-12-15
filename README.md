@@ -11,15 +11,15 @@
    ```
 
 2. **Run the Setup Script**
-   The setup script builds the Docker image and adds the `craft` script to your `PATH`. It also creates a symlink in `~/dotfiles/bin/.local/scripts` for convenience.
+   The setup script builds the Docker image and adds the `craft` script to your `PATH`. It also creates a symlink in `/usr/local/bin` for convenience (and in `~/dotfiles/bin/.local/scripts` if this directory is present on the machine).
    ```bash
    ./setup.sh
    ```
 
 3. **Use the Craft Tool**
-   Generate boilerplate code for a new project with a single command. For example, to create a new Rust project:
+   Generate boilerplate code for a new project with a single command. For example, to create a new Go project:
    ```bash
-   craft --operation=new --language=rust
+   craft new Go --name my-new-go-project
    ```
 
    To display help information, simply call:
@@ -32,7 +32,7 @@
 - The `setup.sh` script:
   - Builds the `craft` Docker image using the provided `Dockerfile`.
   - Creates a symbolic link to the `craft` script in `/usr/local/bin`, making it accessible from anywhere.
-  - Creates an additional symbolic link in `~/dotfiles/bin/.local/scripts` for personal configuration.
+  - Creates an additional symbolic link in `~/dotfiles/bin/.local/scripts`.
 
 - The `craft` command:
   - Runs the `craft` tool inside a lightweight Docker container.
