@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"craft/internal/constants"
+	"craft/internal/handlers"
 	"craft/registry"
 	"fmt"
 	"os"
@@ -46,7 +47,7 @@ func NewNewCmd() *cobra.Command {
 			}
 
 			createDirectoryFor, projectName := getProjectDetails(useCurrentDirName, name)
-			handler, err := registry.GetNewHandler(language)
+			handler, err := handlers.GetNewHandler(language)
 			if err != nil {
 				return err
 			}
@@ -75,7 +76,7 @@ func getProjectDetails(useCurrentDirName bool, name string) (bool, string) {
 			fmt.Println("Error fetching current directory:", err)
 			return true, "run-app" // default name
 		}
-		fmt.Println(filepath.Base(wd))
+		fmt.Println("getProjectDetails says we are in: %v", filepath.Base(wd))
 		return false, filepath.Base(wd)
 	}
 
