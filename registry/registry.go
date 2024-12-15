@@ -6,7 +6,7 @@ import (
 
 // Handler interfaces
 type NewHandler interface {
-	Run(projectName string) error
+	Run(createDirectoryFor bool, projectName string) error
 }
 
 type ScanHandler interface {
@@ -43,8 +43,6 @@ func GetNewHandler(language string) (NewHandler, error) {
 	switch language {
 	case "Go":
 		return newGoHandler{}, nil
-	case "Java":
-		return newJavaHandler{}, nil
 	default:
 		return nil, fmt.Errorf("no 'new' handler found for language '%s'", language)
 	}
@@ -63,15 +61,8 @@ func GetScanHandler(language string) (ScanHandler, error) {
 // Handlers for "new"
 type newGoHandler struct{}
 
-func (h newGoHandler) Run(projectName string) error {
+func (h newGoHandler) Run(createDirectoryFor bool, projectName string) error {
 	fmt.Printf("Creating a new Go project with name '%s'...\n", projectName)
-	return nil
-}
-
-type newJavaHandler struct{}
-
-func (h newJavaHandler) Run(projectName string) error {
-	fmt.Printf("Creating a new Java project with name '%s'...\n", projectName)
 	return nil
 }
 

@@ -13,7 +13,7 @@ import (
 
 // NewNewCmd creates the `new` subcommand
 func NewNewCmd() *cobra.Command {
-	var currentDirName bool
+	var useCurrentDirName bool
 	var name string
 
 	// Dynamically fetch allowed languages for the `new` command
@@ -41,16 +41,16 @@ func NewNewCmd() *cobra.Command {
 				return err
 			}
 
-			if name == "" && !currentDirName {
-				return fmt.Errorf("Run 'craft new <language>' with either --name <name> or --current-dir-name (-c) to specify the project name")
+			if name == "" && !useCurrentDirName {
+				return fmt.Errorf("Run 'craft new <language>' with either --name <name> or --current-dir-name (-c) to specify the project name.")
 			}
 
-			projectName := getProjectName(currentDirName, name)
+			createDirectoryFor, projectName := getProjectDetails(useCurrentDirName, name)
 			handler, err := registry.GetNewHandler(language)
 			if err != nil {
 				return err
 			}
-			handler.Run(projectName)
+			handler.Run(createDirectoryFor, projectName)
 
 			return nil
 		},
@@ -58,26 +58,26 @@ func NewNewCmd() *cobra.Command {
 		SilenceUsage: true,
 	}
 
-	cmd.Flags().BoolVarP(&currentDirName, "current-dir-name", "c", false, "Passes the current directory name as the name for the new project")
-	cmd.Flags().StringVarP(&name, "name", "n", "", "Specify the name of the new project")
+	cmd.Flags().BoolVarP(&useCurrentDirName, "current-dir-name", "c", false, "Use the current directory name for the new project. The new files will be created in the current directory without creating a new one.")
+	cmd.Flags().StringVarP(&name, "name", "n", "", "Specify a name for the new project. A new directory with this name will be created, and the files will be placed inside it.")
 
 	return cmd
 }
 
-// getProjectName extracts the project name based on flags or the current directory
-func getProjectName(currentDirName bool, name string) string {
+func getProjectDetails(useCurrentDirName bool, name string) (bool, string) {
 	if name != "" {
-		return name
+		return true, name
 	}
 
-	if currentDirName {
+	if useCurrentDirName {
 		wd, err := os.Getwd()
 		if err != nil {
 			fmt.Println("Error fetching current directory:", err)
-			return "run-app" // default name
+			return true, "run-app" // default name
 		}
-		return filepath.Base(wd)
+		fmt.Println(filepath.Base(wd))
+		return false, filepath.Base(wd)
 	}
 
-	return ""
+	return false, ""
 }
