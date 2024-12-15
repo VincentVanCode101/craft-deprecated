@@ -18,7 +18,7 @@ COPY . .
 
 RUN CGO_ENABLED=0 GOOS=linux go build -o crafter .
 
-FROM scratch
+FROM busybox:1.37.0
 
 COPY --from=builder /app/crafter /usr/local/bin/crafter
 
