@@ -1,26 +1,20 @@
 FROM golang:1.23.3 AS dev
-
-RUN go install golang.org/x/lint/golint@latest
-
-WORKDIR /app
-
-COPY . .
-
-FROM golang:1.23.3 AS builder
-
 WORKDIR /app
 
 COPY go.mod go.sum ./
-
 RUN go mod download
+
+RUN go install golang.org/x/lint/golint@latest
 
 COPY . .
 
-RUN CGO_ENABLED=0 GOOS=linux go build -o crafter .
+ENTRYPOINT [ "make linux-build" ]
 
-FROM busybox:1.37.0
+FROM busybox:1.37.0 AS runtime
+WORKDIR /
 
-COPY --from=builder /app/crafter /usr/local/bin/crafter
+COPY --from=dev /app/templates /templates
+COPY --from=dev /app/crafter /usr/local/bin/crafter
 
 USER 65532:65532
 

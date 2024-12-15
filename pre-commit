@@ -18,17 +18,18 @@ if [ ! -f "$COMPOSE_FILE" ]; then
     exit 1
 fi
 
-if ! command -v yq &> /dev/null; then
-    color_output "$RED" "Error: yq is not installed. Please install it first."
+# Extract the 'name' field from docker-compose.dev.yml
+COMPOSE_PROJECT_NAME=$(grep -E '^name:' "$COMPOSE_FILE" | awk -F ':' '{print $2}' | tr -d ' "')
+
+if [ -z "$COMPOSE_PROJECT_NAME" ]; then
+    color_output "$RED" "Error: 'name' field not found in $COMPOSE_FILE."
     exit 1
 fi
 
-CONTAINER_NAME=$(yq eval '.services.*.container_name' "$COMPOSE_FILE" | head -n 1)
+color_output "$BLUE" "COMPOSE_PROJECT_NAME: $COMPOSE_PROJECT_NAME"
 
-if [ -z "$CONTAINER_NAME" ]; then
-    color_output "$RED" "Error: No container name found in $COMPOSE_FILE."
-    exit 1
-fi
+CONTAINER_NAME="${COMPOSE_PROJECT_NAME}-go-compiler"
+IMAGE_NAME="${COMPOSE_PROJECT_NAME}-go-compiler:latest"
 
 color_output "$BLUE" "Using container: $CONTAINER_NAME"
 
