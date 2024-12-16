@@ -14,10 +14,6 @@ var OperationsRegistry = map[string]OperationEntry{
 		Languages: []string{"Go", "Java"},
 		Handler:   handlers.GetNewHandler,
 	},
-	"scan": {
-		Languages: []string{"Go"},
-		Handler:   handlers.GetScanHandler,
-	},
 }
 
 func GetAllowedLanguages(operation string) []string {

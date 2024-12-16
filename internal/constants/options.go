@@ -1,7 +1,7 @@
 package constants
 
 import (
-	"craft/internal"
+	"craft/internal/utils"
 	"fmt"
 )
 
@@ -17,10 +17,10 @@ var (
 func ValidateOperationAndLanguage(operation, language string) error {
 	arr, foundOperation := AllowedOperationsWithLanguages[operation]
 	if !foundOperation {
-		return fmt.Errorf("operation '%s' is not allowed. Allowed operations are: %v", operation, internal.Keys(AllowedOperationsWithLanguages))
+		return fmt.Errorf("operation '%s' is not allowed. Allowed operations are: %v", operation, utils.Keys(AllowedOperationsWithLanguages))
 	}
 
-	if !internal.Contains(arr, language) {
+	if !utils.Contains(arr, language) {
 		return fmt.Errorf("operation '%s' cannot be performed with language '%s'. Allowed languages for this operation are: %v", operation, language, arr)
 	}
 
