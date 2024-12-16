@@ -20,42 +20,23 @@ func (h *NewGoHandler) SetTemplatesFS(fs fs.FS) {
 }
 
 var (
-	dockerComposeFile                = "docker-compose.dev.yml"
-	filesThatNeedProjectNameAdjusted = []string{"go.mod.template", dockerComposeFile, "Makefile"}
+	filesThatNeedProjectNameAdjusted = []string{"go.mod.template", "docker-compose.dev.yml", "Makefile"}
 	filesToCopyOver                  = append(filesThatNeedProjectNameAdjusted, "Dockerfile", "go.sum.template", "pre-commit")
 )
-
-// Check if running in Docker by looking for /.dockerenv or entries in /proc/1/cgroup
-func isRunningInDocker() bool {
-	if _, err := os.Stat("/.dockerenv"); err == nil {
-		return true
-	}
-
-	file, err := os.Open("/proc/1/cgroup")
-	if err != nil {
-		return false
-	}
-	defer file.Close()
-
-	buf := make([]byte, 4096)
-	n, _ := file.Read(buf)
-	return strings.Contains(string(buf[:n]), "docker")
-}
 
 func (handler *NewGoHandler) Run(createDirectoryFor bool, projectName string) error {
 	var projectDir string
 	var err error
 
-	if isRunningInDocker() {
+	if utils.IsRunningInDocker() {
 		fmt.Println("Running inside a Docker container.")
-		// Use utils.PrepareProjectDir to determine the directory
+
 		projectDir, err = utils.PrepareProjectDir(createDirectoryFor, projectName)
 		if err != nil {
 			fmt.Printf("Failed to prepare project directory: %w\n", err)
 			return err
 		}
 
-		// Set the source directory for templates within the container
 		err = os.Chdir(filepath.Join("/templates", handler.Language))
 		if err != nil {
 			fmt.Printf("Error changing directory to templates: %v\n", err)
@@ -64,20 +45,19 @@ func (handler *NewGoHandler) Run(createDirectoryFor bool, projectName string) er
 	} else {
 		fmt.Println("Not running inside a Docker container.")
 		// Use the binary's working directory
-		projectDir, err = os.Getwd()
+		projectDir, err = utils.PrepareProjectDir(createDirectoryFor, projectName)
 		if err != nil {
 			fmt.Printf("Failed to get current working directory: %v\n", err)
 			return err
 		}
 	}
 
-	// Track renamed files
 	filesThatHaveBeenCopiedOver := make([]string, 0)
 
 	for _, file := range filesToCopyOver {
 		var fileContent []byte
 
-		if isRunningInDocker() {
+		if utils.IsRunningInDocker() {
 			// Read file content directly from the container's filesystem
 			filePath := filepath.Join("/templates", handler.Language, file)
 			fileContent, err = os.ReadFile(filePath)
@@ -127,14 +107,22 @@ func (handler *NewGoHandler) Run(createDirectoryFor bool, projectName string) er
 		return err
 	}
 
+	// Normalize filesThatNeedProjectNameAdjusted by stripping ".template"
+	normalizedFilesThatNeedProjectNameAdjusted := make(map[string]bool)
+	for _, file := range filesThatNeedProjectNameAdjusted {
+		normalizedFilesThatNeedProjectNameAdjusted[strings.TrimSuffix(file, ".template")] = true
+	}
+
 	// Adjust project name in copied files
 	for _, filePath := range filesThatHaveBeenCopiedOver {
-		err := utils.ChangeProjectNameInFile(filePath, projectName)
-		if err != nil {
-			fmt.Printf("Error changing the project name in %s: %v\n", filePath, err)
+		// Check if the file is in the normalized list of files needing project name adjustment
+		if normalizedFilesThatNeedProjectNameAdjusted[filePath] {
+			err := utils.ChangeProjectNameInFile(filePath, projectName)
+			if err != nil {
+				fmt.Printf("Error changing the project name in %s: %v\n", filePath, err)
+			}
 		}
 	}
 
-	// time.Sleep(60 * time.Second)
 	return nil
 }
