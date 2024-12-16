@@ -8,7 +8,7 @@ RUN go install golang.org/x/lint/golint@latest
 
 COPY . .
 
-ENTRYPOINT [ "make linux-build" ]
+RUN make linux-build
 
 FROM busybox:1.37.0 AS runtime
 WORKDIR /
