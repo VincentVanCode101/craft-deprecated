@@ -1,8 +1,11 @@
 #!/bin/bash
+#
+# Wrapper script to run the craft Docker image as a container.
 
-IMAGE_NAME="craft-exec:latest"
+set -e  # Exit on any error
 
-FOLDER_NAME=$(basename "$(pwd)")
+readonly IMAGE_NAME="craft-exec:latest"
+readonly FOLDER_NAME=$(basename "$(pwd)")
 
 docker run --rm \
   -v "$(pwd):/${FOLDER_NAME}" \

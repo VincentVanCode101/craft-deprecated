@@ -4,6 +4,7 @@ import (
 	"craft/internal/constants"
 	"craft/internal/handlers"
 	"craft/registry"
+	"embed"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -12,8 +13,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// NewNewCmd creates the `new` subcommand
-func NewNewCmd() *cobra.Command {
+func NewNewCmd(templatesFS embed.FS) *cobra.Command {
 	var useCurrentDirName bool
 	var name string
 
@@ -51,6 +51,7 @@ func NewNewCmd() *cobra.Command {
 			if err != nil {
 				return err
 			}
+			handler.SetTemplatesFS(&templatesFS)
 			handler.Run(createDirectoryFor, projectName)
 
 			return nil
@@ -76,7 +77,6 @@ func getProjectDetails(useCurrentDirName bool, name string) (bool, string) {
 			fmt.Println("Error fetching current directory:", err)
 			return true, "run-app" // default name
 		}
-		fmt.Println("getProjectDetails says we are in: %v", filepath.Base(wd))
 		return false, filepath.Base(wd)
 	}
 

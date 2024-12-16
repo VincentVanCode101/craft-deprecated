@@ -20,10 +20,7 @@ source "$SCRIPT_DIR/utils.sh"
 #######################################
 main() {
   log "INFO" "Building the craft Docker image..."
-  if ! docker build -t "$IMAGE_NAME" "$SCRIPT_DIR"; then
-    err "Docker build failed"
-    exit 1
-  fi
+  build_docker_image "$IMAGE_NAME" "$SCRIPT_DIR"
 
   log "INFO" "Adding the craft script to your PATH..."
   chmod +x "$SCRIPT_DIR/craft"

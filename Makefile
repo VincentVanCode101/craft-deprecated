@@ -1,5 +1,5 @@
 # Generic Makefile for building and running Go applications
-BINARY_NAME := crafter
+BINARY_NAME := craft-native
 MAIN_PACKAGE := ./main.go
 
 .PHONY: all build linux-build run clean

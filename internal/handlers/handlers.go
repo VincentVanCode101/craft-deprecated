@@ -9,7 +9,7 @@ import (
 func GetNewHandler(language string) (common.NewHandler, error) {
 	switch language {
 	case "Go":
-		return gohandler.NewGoHandler{Language: "go"}, nil
+		return &gohandler.NewGoHandler{Language: "go"}, nil
 	default:
 		return nil, fmt.Errorf("no 'new' handler found for language '%s'", language)
 	}

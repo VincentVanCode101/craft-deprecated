@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Utility functions for logging with colored output.
+# Utility functions for logging and Docker image building.
 
 # ANSI color codes
 readonly COLOR_RED='\033[0;31m'
@@ -51,4 +51,31 @@ log() {
 #######################################
 err() {
   log "ERROR" "$*" >&2
+}
+
+#######################################
+# Builds a Docker image with a given name and context.
+# Logs the status and exits on failure.
+# Globals:
+#   None
+# Arguments:
+#   $1: Docker image name (required)
+#   $2: Build context (optional, defaults to current directory)
+#######################################
+build_docker_image() {
+  local image_name="$1"
+  local context="${2:-.}"
+
+  if [[ -z "$image_name" ]]; then
+    err "Docker image name must be provided."
+    exit 1
+  fi
+
+  log "INFO" "Building Docker image '$image_name' with context '$context'..."
+  if docker build -t "$image_name" "$context"; then
+    log "INFO" "Successfully built Docker image '$image_name'."
+  else
+    err "Failed to build Docker image '$image_name'."
+    exit 1
+  fi
 }
