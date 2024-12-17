@@ -7,6 +7,9 @@ import (
 	"github.com/spf13/cobra"
 )
 
+// NewInspectCmd creates a new "inspect" command that displays allowed operations and languages.
+// This command is part of the CLI application and is used to provide users with
+// information about the supported operations and their associated languages.
 func NewInspectCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "inspect",

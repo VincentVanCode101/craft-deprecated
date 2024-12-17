@@ -13,7 +13,6 @@ RUN make linux-build
 FROM busybox:1.37.0 AS runtime
 WORKDIR /
 
-COPY --from=dev /app/templates /templates
 COPY --from=dev /app/craft-native /usr/local/bin/craft-native
 
 USER 65532:65532

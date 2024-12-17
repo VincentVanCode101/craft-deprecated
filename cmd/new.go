@@ -13,6 +13,9 @@ import (
 	"github.com/spf13/cobra"
 )
 
+// NewNewCmd creates a new "new" command to generate a project scaffold for a specified language.
+// It supports specifying a project name or using the current directory as the project name.
+// Templates for the project are embedded in the provided templatesFS parameter.
 func NewNewCmd(templatesFS embed.FS) *cobra.Command {
 	var useCurrentDirName bool
 	var name string
