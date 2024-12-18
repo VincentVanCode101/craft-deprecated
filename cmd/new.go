@@ -29,7 +29,7 @@ func NewNewCmd(templatesFS embed.FS) *cobra.Command {
 		Short: "Create a new project",
 		Args: func(cmd *cobra.Command, args []string) error {
 			if len(args) < 1 {
-				return fmt.Errorf("missing required argument: <language>.\nSupported languages are: %v\n",
+				return fmt.Errorf("missing required argument: <language>.\nSupported languages are: %v",
 					allowedLanguagesText)
 			}
 			if len(args) > 1 {
@@ -46,7 +46,7 @@ func NewNewCmd(templatesFS embed.FS) *cobra.Command {
 			}
 
 			if name == "" && !useCurrentDirName {
-				return fmt.Errorf("Run 'craft new <language>' with either --name <name> or --current-dir-name (-c) to specify the project name.")
+				return fmt.Errorf("Run 'craft new <language>' with either --name <name> (-n <name>) or --current-dir-name (-c) to specify the project name.")
 			}
 
 			createDirectoryFor, projectName := getProjectDetails(useCurrentDirName, name)

@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	"craft/internal/constants"
+	"craft/registry"
 	"fmt"
 	"strings"
 
@@ -25,7 +25,7 @@ func NewInspectCmd() *cobra.Command {
 
 func showAllowedOptions() {
 	fmt.Println("Allowed Operations and Languages:")
-	for operation, languages := range constants.AllowedOperationsWithLanguages {
+	for operation, languages := range registry.AllowedOperationsWithLanguages {
 		fmt.Printf("- %s: {%v}\n", operation, strings.Join(languages, ", "))
 	}
 }
