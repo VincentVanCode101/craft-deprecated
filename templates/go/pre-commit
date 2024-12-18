@@ -19,7 +19,7 @@ if [ ! -f "$COMPOSE_FILE" ]; then
 fi
 
 # Extract the 'name' field from docker-compose.dev.yml
-COMPOSE_PROJECT_NAME=$(grep -E '^name:' "$COMPOSE_FILE" | awk -F ':' '{print $2}' | tr -d ' "')
+COMPOSE_PROJECT_NAME=$(grep -E '^name:' "$COMPOSE_FILE" | awk -F ':' '{print $2}' | tr -d ' "' | tr '[:upper:]' '[:lower:]')
 
 if [ -z "$COMPOSE_PROJECT_NAME" ]; then
     color_output "$RED" "Error: 'name' field not found in $COMPOSE_FILE."
