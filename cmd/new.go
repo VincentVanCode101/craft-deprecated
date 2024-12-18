@@ -20,7 +20,6 @@ func NewNewCmd(templatesFS embed.FS) *cobra.Command {
 	var useCurrentDirName bool
 	var name string
 
-	// Dynamically fetch allowed languages for the `new` command
 	allowedLanguages := registry.GetAllowedLanguages("new")
 	allowedLanguagesText := strings.Join(allowedLanguages, ", ")
 
@@ -57,7 +56,10 @@ func NewNewCmd(templatesFS embed.FS) *cobra.Command {
 				return err
 			}
 			handler.SetTemplatesFS(&templatesFS)
-			handler.Run(createDirectoryFor, projectName)
+			err = handler.Run(createDirectoryFor, projectName)
+			if err != nil {
+				return err
+			}
 
 			return nil
 		},

@@ -20,31 +20,38 @@ func GetNewHandler(language []string) (common.NewHandler, error) {
 		if len(language) < 3 {
 			return nil, fmt.Errorf("java language options must specify at least build tool and framework")
 		}
-		switch language[1] {
+
+		buildTool := language[1]
+		framework := language[2]
+
+		// Validate combinations of build tool and framework
+		switch buildTool {
 		case "maven":
-			switch language[2] {
-			case "noframework":
-				return &javahandler.NewJavaHandler{Language: "java-maven-noframework"}, nil
-			case "quarkus":
-				return nil, fmt.Errorf("no handler for java maven quarkus implemented")
-			case "springboot":
-				return nil, fmt.Errorf("no handler for java maven springboot implemented")
+			switch framework {
+			case "noframework", "quarkus", "springboot":
+				return &javahandler.NewJavaHandler{
+					Language:  fmt.Sprintf("java-%s-%s", buildTool, framework),
+					BuildTool: buildTool,
+					Framework: framework,
+				}, nil
 			default:
-				return nil, fmt.Errorf("no handler for java with build tool maven and framework '%s' implemented", language[2])
+				return nil, fmt.Errorf("no handler for java maven framework '%s' implemented", framework)
 			}
+
 		case "gradle":
-			switch language[2] {
-			case "quarkus":
-				return nil, fmt.Errorf("no handler for java gradle quarkus implemented")
-			case "springboot":
-				return nil, fmt.Errorf("no handler for java gradle springboot implemented")
-			case "noframework":
-				return nil, fmt.Errorf("no handler for java gradle and no framework implemented")
+			switch framework {
+			case "noframework", "quarkus", "springboot":
+				return &javahandler.NewJavaHandler{
+					Language:  fmt.Sprintf("java-%s-%s", buildTool, framework),
+					BuildTool: buildTool,
+					Framework: framework,
+				}, nil
 			default:
-				return nil, fmt.Errorf("no handler for java gradle framework '%s' implemented", language[2])
+				return nil, fmt.Errorf("no handler for java gradle framework '%s' implemented", framework)
 			}
+
 		default:
-			return nil, fmt.Errorf("no handler for java with build tool '%s' implemented", language[1])
+			return nil, fmt.Errorf("no handler for java with build tool '%s' implemented", buildTool)
 		}
 
 	default:
