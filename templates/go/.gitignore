@@ -18,17 +18,43 @@
 go.work
 tmp/
 
-# IDE specific files
-.vscode
-.idea
-
-# .env file
+# Local environment
 .env
 
 # Project build
 main
 *templ.go
 
-# OS X generated file
+
+# Eclipse
+.project
+.classpath
+.settings/
+bin/
+
+# IntelliJ
+.idea
+*.ipr
+*.iml
+*.iws
+
+# NetBeans
+nb-configuration.xml
+
+# Visual Studio Code
+.vscode
+.factorypath
+
+# OSX
 .DS_Store
 
+# Vim
+*.swp
+*.swo
+
+# patch
+*.orig
+*.rej
+
+# OS X generated file
+.DS_Store

@@ -1,51 +1,5 @@
-# Craft Tool
+---
 
-`craft` is a CLI tool that generates boilerplate code for various programming languages using Docker. It is designed to be easy to set up and use, requiring minimal configuration.
-
-## Quick Start
-
-1. **Clone the Repository**
-   ```bash
-   git clone https://github.com/VincentVanCode101/craft.git
-   cd craft
-   ```
-
-2. **Run the Setup Script**
-   The setup script builds the Docker image and adds the `craft` script to your `PATH`. It also creates a symlink in `/usr/local/bin` for convenience (and in `~/dotfiles/bin/.local/scripts` if this directory is present on the machine).
-   ```bash
-   ./setup.sh
-   ```
-
-3. **Use the Craft Tool**
-   Generate boilerplate code for a new project with a single command. For example, to create a new Go project:
-   ```bash
-   craft new Go --name my-new-go-project
-   ```
-
-   To display help information, simply call:
-   ```bash
-   craft
-   ```
-
-## How It Works
-
-- The `setup.sh` script:
-  - Builds the `craft` Docker image using the provided `Dockerfile`.
-  - Creates a symbolic link to the `craft` script in `/usr/local/bin`, making it accessible from anywhere.
-  - Creates an additional symbolic link in `~/dotfiles/bin/.local/scripts`.
-
-- The `craft` command:
-  - Runs the `craft` tool inside a lightweight Docker container.
-  - Mounts your current directory into the container, ensuring that generated files are created on your host system.
-
-## Features
-
-- Supports multiple programming languages.
-- Automatically generates boilerplate files like `Dockerfile`, `Makefile`, and others.
-- Ensures generated files have the correct ownership and permissions on the host system.
-
-
-# Java
 ### **How to Use the Makefile (Container Usage)**
 
 This `Makefile` is designed to streamline the process of building, running, testing, and cleaning up a Java project inside a Docker container environment. The commands are optimized to work with a typical Java/Maven project structure and can be executed within the container.
@@ -111,7 +65,7 @@ This `Makefile` is designed to streamline the process of building, running, test
   - Generates an uber JAR named `$(PROJECT_NAME).jar` in the `$(JAR_DIR)` directory.
   - The JAR includes:
     - All compiled classes.
-    - A manifest file with the `Main-Class` specified as `$(MAIN_CLASS)`.
+    - A manifest file with the `Main-Class` specified as `MAIN_CLASS`.
 
 - **Example**:
   ```bash
@@ -120,8 +74,8 @@ This `Makefile` is designed to streamline the process of building, running, test
   Output:
   ```
   Compiling all files in src/main/java...
-  Creating uber JAR for MyJavaProject...
-  Uber JAR created: jar/MyJavaProject.jar
+  Creating uber JAR for PROJECT_NAME...
+  Uber JAR created: jar/PROJECT_NAME.jar
   ```
 
 ---
@@ -133,7 +87,7 @@ This `Makefile` is designed to streamline the process of building, running, test
   make run-jar
   ```
 - **Effect**:
-  - Executes the `$(PROJECT_NAME).jar` file in the `$(JAR_DIR)` directory.
+  - Executes the `PROJECT_NAME.jar` file in the `$(JAR_DIR)` directory.
   - Automatically builds the uber JAR if it doesn’t already exist.
 
 - **Example**:
@@ -142,9 +96,9 @@ This `Makefile` is designed to streamline the process of building, running, test
   ```
   Output:
   ```
-  Creating uber JAR for MyJavaProject...
-  Uber JAR created: jar/MyJavaProject.jar
-  Running uber JAR for MyJavaProject...
+  Creating uber JAR for PROJECT_NAME...
+  Uber JAR created: jar/PROJECT_NAME.jar
+  Running uber JAR for PROJECT_NAME...
   Hello, Uber JAR!
   ```
 
@@ -159,7 +113,7 @@ This `Makefile` is designed to streamline the process of building, running, test
     ```
   Output:
   ```
-  Running uber JAR for MyJavaProject...
+  Running uber JAR for PROJECT_NAME...
   Hello
   World
   ```
@@ -190,6 +144,10 @@ This `Makefile` is designed to streamline the process of building, running, test
 
 ### **Best Practices**
 - **Main Class**: Update the `MAIN_CLASS` variable in the `Makefile` if your main application class is different from `com.main.App`.
-- **Project Name**: Update the `JAR_NAME` variable in the Makefile to reflect your application name.
+- **Project Name**: Update the `JAR_NAME` variable to reflect your application name.
 
 This `Makefile` simplifies project management inside the container, enabling you to compile, run, package, and clean up your Java project efficiently.
+
+---
+
+This version retains `PROJECT_NAME` throughout so it can be dynamically replaced by your script. Let me know if you need further customization!
