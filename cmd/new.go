@@ -50,7 +50,9 @@ func NewNewCmd(templatesFS embed.FS) *cobra.Command {
 			}
 
 			createDirectoryFor, projectName := getProjectDetails(useCurrentDirName, name)
-			handler, err := handlers.GetNewHandler(language)
+
+			languageStrings := strings.Split(strings.ToLower(language), "-")
+			handler, err := handlers.GetNewHandler(languageStrings)
 			if err != nil {
 				return err
 			}

@@ -16,7 +16,7 @@ const (
 )
 
 var (
-	filesThatNeedProjectNameAdjusted = []string{"go.mod.template", "docker-compose.dev.yml", "Makefile"}
+	filesThatNeedProjectNameAdjusted = []string{"docker-compose.dev.yml", "Makefile", "README.md"}
 )
 
 func (handler *NewJavaHandler) Run(createDirectoryFor bool, projectName string) error {
