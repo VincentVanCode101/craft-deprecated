@@ -201,4 +201,4 @@ The pre-commit hook script ensures that your code passes static analysis checks 
 
 ---
 
-This `Makefile` simplifies project management by providing quick commands for building, running, and cleaning your Go application, as well as preparing it for Linux deployment.
+This `Makefile` simplifies project management insid the container by providing quick commands for building, running, and cleaning your Go application, as well as preparing it for Linux deployment.
