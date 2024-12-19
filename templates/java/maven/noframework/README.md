@@ -62,7 +62,7 @@ This `Makefile` is designed to streamline the process of building, running, test
   ```
 - **Effect**:
   - Compiles all `.java` files (if not already compiled).
-  - Generates an uber JAR named `$(PROJECT_NAME).jar` in the `$(JAR_DIR)` directory.
+  - Generates an uber JAR named `PROJECT_NAME.jar` in the `$(JAR_DIR)` directory.
   - The JAR includes:
     - All compiled classes.
     - A manifest file with the `Main-Class` specified as `MAIN_CLASS`.
@@ -96,10 +96,8 @@ This `Makefile` is designed to streamline the process of building, running, test
   ```
   Output:
   ```
-  Creating uber JAR for PROJECT_NAME...
-  Uber JAR created: jar/PROJECT_NAME.jar
-  Running uber JAR for PROJECT_NAME...
-  Hello, Uber JAR!
+  Running uber JAR for PROJECT_NAME without arguments...
+  Hello World!
   ```
 
 - **Pass Arguments to the JAR**:
@@ -109,14 +107,15 @@ This `Makefile` is designed to streamline the process of building, running, test
     ```
   - Example:
     ```bash
-    make run-jar ARGS="Hello World"
+    make run-jar ARGS="foo bar"
     ```
   Output:
   ```
-  Running uber JAR for PROJECT_NAME...
-  Hello
-  World
+  Running uber JAR for PROJECT_NAME with arguments: foo bar...
+  Hello World!
   ```
+> [!NOTE]
+> The arguments of "foo" and "bar" do not appear in the programm output since the App.java does not evaluate them... but if you had logic depending on the args, this run command would pass them correctly to the PROJECT_NAME.jar
 
 ---
 
@@ -149,5 +148,3 @@ This `Makefile` is designed to streamline the process of building, running, test
 This `Makefile` simplifies project management inside the container, enabling you to compile, run, package, and clean up your Java project efficiently.
 
 ---
-
-This version retains `PROJECT_NAME` throughout so it can be dynamically replaced by your script. Let me know if you need further customization!

@@ -36,21 +36,26 @@ endif
 
 # Create an uber JAR
 uber-jar: build
-	@if [ -z "$(PROJECT_NAME)" ]; then \
-		echo "Error: PROJECT_NAME is not set."; \
+	@if [ -z "$(JAR_NAME)" ]; then \
+		echo "Error: JAR_NAME is not set."; \
 		exit 1; \
 	fi
-	@echo "Creating uber JAR for $(PROJECT_NAME)..."
+	@echo "Creating uber JAR for $(JAR_NAME)..."
 	@mkdir -p $(JAR_DIR)
 	@echo "Manifest-Version: 1.0\nMain-Class: $(MAIN_CLASS)" > manifest.txt
-	@jar cfm $(JAR_DIR)/$(PROJECT_NAME).jar manifest.txt -C $(BUILD_DIR) .
+	@jar cfm $(JAR_DIR)/$(JAR_NAME).jar manifest.txt -C $(BUILD_DIR) .
 	@rm manifest.txt
-	@echo "Uber JAR created: $(JAR_DIR)/$(PROJECT_NAME).jar"
+	@echo "Uber JAR created: $(JAR_DIR)/$(JAR_NAME).jar"
 
-# Run the uber JAR
-run-jar: uber-jar
-	@echo "Running uber JAR for $(PROJECT_NAME)..."
-	@java -jar $(JAR_DIR)/$(PROJECT_NAME).jar
+# Run the uber JAR, passing any arguments if ARGS is set
+run-jar:
+ifndef ARGS
+	@echo "Running uber JAR for $(JAR_NAME) without arguments..."
+	@java -jar $(JAR_DIR)/$(JAR_NAME).jar
+else
+	@echo "Running uber JAR for $(JAR_NAME) with arguments: $(ARGS)..."
+	@java -jar $(JAR_DIR)/$(JAR_NAME).jar $(ARGS)
+endif
 
 # Run all tests
 test:

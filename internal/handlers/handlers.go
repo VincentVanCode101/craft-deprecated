@@ -24,13 +24,12 @@ func GetNewHandler(language []string) (common.NewHandler, error) {
 		buildTool := language[1]
 		framework := language[2]
 
-		// Validate combinations of build tool and framework
 		switch buildTool {
 		case "maven":
 			switch framework {
 			case "noframework", "quarkus", "springboot":
 				return &javahandler.NewJavaHandler{
-					Language:  fmt.Sprintf("java-%s-%s", buildTool, framework),
+					Language:  "java",
 					BuildTool: buildTool,
 					Framework: framework,
 				}, nil
@@ -42,7 +41,7 @@ func GetNewHandler(language []string) (common.NewHandler, error) {
 			switch framework {
 			case "noframework", "quarkus", "springboot":
 				return &javahandler.NewJavaHandler{
-					Language:  fmt.Sprintf("java-%s-%s", buildTool, framework),
+					Language:  "java",
 					BuildTool: buildTool,
 					Framework: framework,
 				}, nil

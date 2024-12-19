@@ -55,6 +55,3 @@ nb-configuration.xml
 # patch
 *.orig
 *.rej
-
-# OS X generated file
-.DS_Store
