@@ -161,7 +161,7 @@ Allowed Operations:
 # **Supported Languages**
 
 <h2 style="display: flex; align-items: center; gap: 10px; font-size: 2rem; font-weight: bold; margin-left: 0;">
-  Go <img src="./assets/gopher.png" alt="Go Logo" width="50" style="vertical-align: middle;"/>
+  Go <img src="./assets/gopher.png" alt="Go Logo" width="30" style="vertical-align: middle;"/>
 </h2>
 
 <details>
@@ -187,7 +187,7 @@ Allowed Operations:
 </details>
 
 <h2 style="display: flex; align-items: center; gap: 10px; font-size: 2rem; font-weight: bold; margin-left: 0;">
-  Java <img src="./assets/java.svg" alt="Go Logo" width="50" style="vertical-align: middle;"/>
+  Java <img src="./assets/java.svg" alt="Go Logo" width="30" style="vertical-align: middle;"/>
 </h2>
 
 <details>
