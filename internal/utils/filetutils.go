@@ -164,7 +164,6 @@ func ListFilesWithPattern(fsys fs.FS, dir string, pattern string) ([]string, err
 		}
 
 		name := entry.Name()
-		fmt.Printf("the name of file %v", name)
 
 		fileInfo, err := entry.Info()
 		if err != nil {
@@ -215,7 +214,7 @@ func CopyAllEntries(sourceDir, destinationDir string) error {
 }
 
 func CopyFileFromFS(sourceFS fs.FS, sourcePath string, destPath string) error {
-	fmt.Printf("copy file from fs -> from %v to %v\n", sourcePath, destPath)
+	// fmt.Printf("copy file from fs -> from %v to %v\n", sourcePath, destPath)
 
 	sourceFile, err := sourceFS.Open(sourcePath)
 	if err != nil {

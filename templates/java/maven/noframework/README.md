@@ -1,4 +1,41 @@
 ---
+# PROJECT_NAME
+### **How to Start the Project Using Docker**
+
+This project is configured to run inside a Docker container for consistent development environments. Follow the steps below to set up, start, and use the project.
+
+---
+
+### **Steps to Start the Project**
+
+#### **1. Build and Start the Docker Environment**
+Use the provided `docker-compose.dev.yml` file to build and start the development container.
+
+- **Build the container:**
+  ```bash
+  docker compose -f docker-compose.dev.yml build
+  ```
+
+- **Start the container:**
+  ```bash
+  docker compose -f docker-compose.dev.yml up -d
+  ```
+
+- **Confirm the container is running:**
+  ```bash
+  docker ps
+  ```
+  Look for a container named `PROJECT_NAME-java-env`.
+
+#### **2. Connect to the Development Container**
+Once the container is running, connect to it for development purposes.
+
+- **Open a bash session in the container:**
+  ```bash
+  docker exec -it PROJECT_NAME-java-env bash
+  ```
+  - use the `make` command from inside the container (see the chapter below)
+
 
 ### **How to Use the Makefile (Container Usage)**
 

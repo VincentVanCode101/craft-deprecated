@@ -32,7 +32,6 @@ func PrepareProjectDir(createDir bool, projectName string) (string, error) {
 
 func CopyDirFromFS(fsys fs.FS, sourceDir, destDir string) error {
 	err := fs.WalkDir(fsys, sourceDir, func(path string, d fs.DirEntry, err error) error {
-		fmt.Printf("\nthe current filepath: %v\n", path)
 		if err != nil {
 			fmt.Printf("error walking directory: %w", err)
 			return err
