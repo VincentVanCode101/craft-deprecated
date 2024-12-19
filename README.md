@@ -20,7 +20,6 @@ The `Craft` CLI is a tool designed to simplify the process of bootstrapping new 
 - [Installation](#installation)
 - [Command Line Usage](#command-line-usage)
   - [Creating New Projects](#1-creating-new-projects)
-  - [Updating Existing Projects](#2-updating-existing-projects)
   - [Inspecting Supported Operations](#3-inspecting-supported-operations)
 - [Supported Languages](#supported-languages)
 - [License](#license)
@@ -52,9 +51,6 @@ These problems slow down productivity, create barriers for quickly experimenting
 - **Project Scaffolding** (`new` command):
   - Quickly generate project files and structure for supported languages and frameworks.
   - Embedded templates ensure a consistent starting point for new projects.
-
-- **Project Updates** (`update` command):
-  - Modify and maintain existing projects with additional boilerplate code or configuration updates.
 
 - **Inspection** (`inspect` command):
   - View all allowed operations and their supported language/framework combinations.
@@ -112,32 +108,9 @@ craft new <language>
    craft new --help
    ```
 
-### 2. Updating Existing Projects
-
-Modify an existing project to include additional boilerplate or updated configuration:
-```bash
-craft update <language>
-```
-
-#### Examples:
-1. Update a Java project with a specific framework:
-   ```bash
-   craft update java-maven-quarkus
-   ```
-
-2. Update a Go project:
-   ```bash
-   craft update go
-   ```
-
-3. View help for the `update` command:
-   ```bash
-   craft update --help
-   ```
-
 ---
 
-### 3. Inspecting Supported Operations
+### 2. Inspecting Supported Operations
 
 View all allowed operations and their supported languages/framework combinations:
 ```bash
@@ -152,7 +125,6 @@ Example output:
 ```
 Allowed Operations:
 - new: go, java-maven-noframework
-- update: go
 ```
 
 ---
@@ -166,9 +138,8 @@ Allowed Operations:
 <details>
 <summary>more</summary>
 
-- **Allowed Operations**:
+#### Allowed Operations:
   - `new`: Create a new Go project ([Documentation](./docs/go.md)).
-  - `update`: Update an existing Go project ([Documentation](./docs/go.md)).
   
 #### **Examples**:
 1. Create a new Go project:
@@ -195,23 +166,18 @@ Allowed Operations:
 - **Allowed Build Tools and Frameworks**:
   - **Maven**:
     - `noframework`: Create a Java projects without any specific framework. ([Documentation](./docs/java-maven-noframework.md))
+
+    **Example**:
+   Create a new Java project using Maven:
+    ```bash
+    craft new java-maven-noframework -c
+    ```
     - `spring`: Coming soon...
     - `quarkus`: Coming soon...
   - **Gradle**:
     - `noframework`: Coming soon...
     - `spring`: Coming soon...
     - `quarkus`: Coming soon...
-
-#### **Examples**:
-1. Create a new Java project using Maven:
-   ```bash
-   craft new java-maven-noframework -c
-   ```
-
-2. Update an existing Java project:
-   ```bash
-   craft update java-maven-noframework
-   ```
 
 [Learn more about crafting new Java projects](./docs/java-maven-noframework.md).
 
