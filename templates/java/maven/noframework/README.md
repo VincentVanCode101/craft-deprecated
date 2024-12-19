@@ -34,12 +34,14 @@ Once the container is running, connect to it for development purposes.
   ```bash
   docker exec -it PROJECT_NAME-java-env bash
   ```
-  - use the `make` command from inside the container (see the chapter below)
+  - use the `make` command from here on (see the chapter below)
 
 
 ### **How to Use the Makefile (Container Usage)**
 
 This `Makefile` is designed to streamline the process of building, running, testing, and cleaning up a Java project inside a Docker container environment. The commands are optimized to work with a typical Java/Maven project structure and can be executed within the container.
+
+You need to connect to the [development container](#2-connect-to-the-development-container) and can use the `make` commands here (and only here... not outside the container)
 
 ---
 
