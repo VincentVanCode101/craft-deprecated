@@ -26,7 +26,7 @@ The `Craft` CLI is a tool designed to simplify the process of bootstrapping new 
 - [License](#license)
 
 ---
-## Problems with Other Scaffolding Tools
+## ⚠️ Problems with Other Scaffolding Tools
 
 While exploring new languages or starting small projects, I encountered several issues with existing scaffolding tools:
 
@@ -39,7 +39,7 @@ These problems slow down productivity, create barriers for quickly experimenting
 
 ---
 
-## **Why Use Craft?**
+## 🛠️ Why Use Craft?
 
 - **Dockerized Development**: Automatically creates a containerized environment for every project, so you don’t need the language or runtime installed on your machine.
 - **Lightweight and Fast**: Runs as a precompiled binary, ensuring fast execution without additional dependencies required on your host.
@@ -47,7 +47,7 @@ These problems slow down productivity, create barriers for quickly experimenting
 - **Minimal Setup**: Generates only the essential files needed to start coding, with the option to create more complex setups if you’re familiar with the language. This allows you to build and structure your project the way you want.
 - **Beginner-Friendly**: Focuses on simplicity and clarity, giving you exactly what you need to get started with a new language or task.
 
-## **Features**
+## ✨ Features
 
 - **Project Scaffolding** (`new` command):
   - Quickly generate project files and structure for supported languages and frameworks.
@@ -68,7 +68,7 @@ These problems slow down productivity, create barriers for quickly experimenting
 
 ---
 
-## **Installation**
+## 📥 Installation
 
 1. Clone the repository:
    ```bash
@@ -83,20 +83,20 @@ These problems slow down productivity, create barriers for quickly experimenting
   - the binary is automatically added to `/usr/local/bin/craft`
 ---
 
-## **Command Line Usage**
+## 💻 Command Line Usage
 
-### **1. Creating New Projects**
+### 1. Creating New Projects
 
 Generate a new project by specifying the language:
 ```bash
 craft new <language>
 ```
 
-#### **Options**:
+#### Options:
 - `--name, -n`: Specify a name for the new project.
 - `--current-dir-name, -c`: Use the current directory name for the project.
 
-#### **Examples**:
+#### Examples:
 1. Generate a Go project in the current directory:
    ```bash
    craft new go -c
@@ -112,14 +112,14 @@ craft new <language>
    craft new --help
    ```
 
-### **2. Updating Existing Projects**
+### 2. Updating Existing Projects
 
 Modify an existing project to include additional boilerplate or updated configuration:
 ```bash
 craft update <language>
 ```
 
-#### **Examples**:
+#### Examples:
 1. Update a Java project with a specific framework:
    ```bash
    craft update java-maven-quarkus
@@ -137,7 +137,7 @@ craft update <language>
 
 ---
 
-### **3. Inspecting Supported Operations**
+### 3. Inspecting Supported Operations
 
 View all allowed operations and their supported languages/framework combinations:
 ```bash
@@ -157,12 +157,11 @@ Allowed Operations:
 
 ---
 
+# 🌐Supported Languages
 
-# **Supported Languages**
-
-<h2 style="display: flex; align-items: center; gap: 10px; font-size: 2rem; font-weight: bold; line-height: 1;">
+<span style="display: flex; align-items: center; gap: 10px; font-size: 2rem; font-weight: bold; line-height: 1;">
   Go <img src="./assets/gopher.png" alt="Go Logo" style="height: 2rem;"/>
-</h2>
+</span>
 
 <details>
 <summary>more</summary>
