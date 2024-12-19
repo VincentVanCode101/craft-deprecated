@@ -1,195 +1,229 @@
-# Craft Tool
+# **Craft CLI Tool**
 
-`craft` is a CLI tool that generates boilerplate code for various programming languages using Docker. It is designed to be easy to set up and use, requiring minimal configuration.
 
-## Quick Start
+![Craft Logo](assets/logo.png)
 
-1. **Clone the Repository**
+## **Overview**
+The `Craft` CLI is a tool designed to simplify the process of bootstrapping new projects by generating boilerplate code for various languages and frameworks.
+
+- 🛠️ **Simplifies Project Bootstrapping**: Generates boilerplate code for various languages and frameworks.  
+- 🐳 **Docker-Ready**: All projects are designed to run in Docker containers, allowing you to create and use them without installing the required language.
+- 🌐 **Multi-Language Support**: Works with Go, Java, and other supported languages.  
+- 🏎️ **Small and Fast**: A lightweight CLI tool designed for quick execution.  
+- 💡 **Efficient and Reliable**: Helps you start and maintain projects effortlessly.  
+
+## **Table of Contents**
+
+- [Problems with Other Scaffolding Tools](#problems-with-other-scaffolding-tools)
+- [Why Use Craft](#why-use-craft)
+- [Features](#features)
+- [Installation](#installation)
+- [Command Line Usage](#command-line-usage)
+  - [Creating New Projects](#1-creating-new-projects)
+  - [Updating Existing Projects](#2-updating-existing-projects)
+  - [Inspecting Supported Operations](#3-inspecting-supported-operations)
+- [Supported Languages](#supported-languages)
+- [License](#license)
+
+---
+## Problems with Other Scaffolding Tools
+
+While exploring new languages or starting small projects, I encountered several issues with existing scaffolding tools:
+
+1. **Target Language Dependencies**: Most tools require you to have the target language installed to use them, making setup cumbersome.  
+2. **Language-Specific Tools**: Existing tools are often tied to a single language, limiting flexibility for multi-language workflows.  
+3. **Complex Projects**: These tools often generate large, interconnected setups that can be overwhelming for beginners or unnecessary for small tasks.  
+4. **No Dockerized Setup**: Few tools create a containerized environment, making it harder to run the created projects in isolated and consistent environments.
+
+These problems slow down productivity, create barriers for quickly experimenting with a new language or solving coding challenges, and result in projects that do not run in a containerized, isolated setup. Running projects in Docker containers ensures consistency by providing a uniform environment across systems, eliminating 'it works on my machine' issues, isolating dependencies, and enabling easy cleanup or switching between projects without affecting the host system.
+
+---
+
+## **Why Use Craft?**
+
+- **Dockerized Development**: Automatically creates a containerized environment for every project, so you don’t need the language or runtime installed on your machine.
+- **Lightweight and Fast**: Runs as a precompiled binary, ensuring fast execution without additional dependencies required on your host.
+- **Multi-Language Support**: Works seamlessly across multiple languages, making it versatile for various tasks.
+- **Minimal Setup**: Generates only the essential files needed to start coding, with the option to create more complex setups if you’re familiar with the language. This allows you to build and structure your project the way you want.
+- **Beginner-Friendly**: Focuses on simplicity and clarity, giving you exactly what you need to get started with a new language or task.
+
+## **Features**
+
+- **Project Scaffolding** (`new` command):
+  - Quickly generate project files and structure for supported languages and frameworks.
+  - Embedded templates ensure a consistent starting point for new projects.
+
+- **Project Updates** (`update` command):
+  - Modify and maintain existing projects with additional boilerplate code or configuration updates.
+
+- **Inspection** (`inspect` command):
+  - View all allowed operations and their supported language/framework combinations.
+
+- **Flexible Project Naming**:
+  - Use the current directory name as the project name.
+  - Specify a custom project name with a command-line flag.
+
+- **Docker-Ready**:
+  - Generated and updated projects are pre-configured to run in Docker containers.
+
+---
+
+## **Installation**
+
+1. Clone the repository:
    ```bash
    git clone https://github.com/VincentVanCode101/craft.git
    cd craft
    ```
 
-2. **Run the Setup Script**
-   The setup script builds the Docker image and adds the `craft` script to your `PATH`. It also creates a symlink in `/usr/local/bin` for convenience (and in `~/dotfiles/bin/.local/scripts` if this directory is present on the machine).
+2. Build the binary:
    ```bash
-   ./setup.sh
+   ./getBinary.sh
+   ```
+  - the binary is automatically added to `/usr/local/bin/craft`
+---
+
+## **Command Line Usage**
+
+### **1. Creating New Projects**
+
+Generate a new project by specifying the language:
+```bash
+craft new <language>
+```
+
+#### **Options**:
+- `--name, -n`: Specify a name for the new project.
+- `--current-dir-name, -c`: Use the current directory name for the project.
+
+#### **Examples**:
+1. Generate a Go project in the current directory:
+   ```bash
+   craft new go -c
    ```
 
-3. **Use the Craft Tool**
-   Generate boilerplate code for a new project with a single command. For example, to create a new Go project:
+2. Generate a new Java project with Maven in a directory named `MyJavaApp`:
    ```bash
-   craft new Go --name my-new-go-project
+   craft new java-maven-noframework -n MyJavaApp
    ```
 
-   To display help information, simply call:
+3. View help for the `new` command:
    ```bash
-   craft
+   craft new --help
    ```
 
-## How It Works
+### **2. Updating Existing Projects**
 
-- The `setup.sh` script:
-  - Builds the `craft` Docker image using the provided `Dockerfile`.
-  - Creates a symbolic link to the `craft` script in `/usr/local/bin`, making it accessible from anywhere.
-  - Creates an additional symbolic link in `~/dotfiles/bin/.local/scripts`.
+Modify an existing project to include additional boilerplate or updated configuration:
+```bash
+craft update <language>
+```
 
-- The `craft` command:
-  - Runs the `craft` tool inside a lightweight Docker container.
-  - Mounts your current directory into the container, ensuring that generated files are created on your host system.
+#### **Examples**:
+1. Update a Java project with a specific framework:
+   ```bash
+   craft update java-maven-quarkus
+   ```
 
-## Features
+2. Update a Go project:
+   ```bash
+   craft update go
+   ```
 
-- Supports multiple programming languages.
-- Automatically generates boilerplate files like `Dockerfile`, `Makefile`, and others.
-- Ensures generated files have the correct ownership and permissions on the host system.
-
-
-# Java
-### **How to Use the Makefile (Container Usage)**
-
-This `Makefile` is designed to streamline the process of building, running, testing, and cleaning up a Java project inside a Docker container environment. The commands are optimized to work with a typical Java/Maven project structure and can be executed within the container.
-
----
-
-### **Commands Overview**
-
-#### **1. Default Target: `make` or `make all`**
-- **Purpose**: Compiles all `.java` files in the `$(SOURCE_DIR)` (`src/main/java`) directory.
-- **Usage**:
-  ```bash
-  make
-  ```
-- **Effect**:
-  - Creates the `build` directory (if it doesn’t already exist).
-  - Compiles all `.java` files into `$(BUILD_DIR)`.
+3. View help for the `update` command:
+   ```bash
+   craft update --help
+   ```
 
 ---
 
-#### **2. Build: `make build`**
-- **Purpose**: Builds the project, either the entire project or a specific Java file.
-- **Usage**:
-  - **Build the entire project**:
-    ```bash
-    make build
-    ```
-  - **Build a specific file**:
-    ```bash
-    make build ARGS=src/main/java/com/main/foo/bar.java
-    ```
-- **Effect**:
-  - Compiles all `.java` files into `$(BUILD_DIR)` when `ARGS` is not specified.
-  - If `ARGS` is provided, only the specified file is compiled into `$(BUILD_DIR)`.
+### **3. Inspecting Supported Operations**
+
+View all allowed operations and their supported languages/framework combinations:
+```bash
+craft inspect
+```
+
+#### **Example**:
+```bash
+craft inspect
+```
+Example output:
+```
+Allowed Operations:
+- new: go, java-maven-noframework
+- update: go
+```
 
 ---
 
-#### **3. Run: `make run`**
-- **Purpose**: Runs the application, either the main class or a standalone file.
-- **Usage**:
-  - **Run the main project**:
-    ```bash
-    make run
-    ```
-  - **Run a specific file**:
-    ```bash
-    make run ARGS=src/main/java/com/main/foo/bar.java
-    ```
-- **Effect**:
-  - Runs the `MAIN_CLASS` (defined as `com.main.App`) if `ARGS` is not specified.
-  - If `ARGS` is provided, it derives the fully qualified class name from the file path and executes it.
+
+# **Supported Languages**
+
+<div style="display: flex; align-items: center; gap: 10px; font-size: 2.5rem; font-weight: bold; margin-left: 0;">
+  <span>Go</span>
+  <img src="./assets/gopher.png" alt="Go Logo" style="width: 100px; height: auto;"/>
+</div>
+
+<details>
+<summary>more</summary>
+
+- **Allowed Operations**:
+  - `new`: Create a new Go project ([Documentation](./docs/go.md)).
+  - `update`: Update an existing Go project ([Documentation](./docs/go.md)).
+  
+#### **Examples**:
+1. Create a new Go project:
+   ```bash
+   craft new go -c
+   ```
+
+2. Update an existing Go project:
+   ```bash
+   craft update go
+   ```
+
+[Learn more about crafting new Go projects](./docs/go.md).
+
+</details>
+
+
+<div style="display: flex; align-items: center; gap: 10px; font-size: 2.5rem; font-weight: bold; margin-left: 0;">
+  <span>Java</span>
+  <img src="./assets/java.svg" alt="Java Logo" style="width: 100px; height: auto;"/>
+</div>
+
+
+<details>
+<summary>more</summary>
+
+- **Allowed Build Tools and Frameworks**:
+  - **Maven**:
+    - `noframework`: Create a Java projects without any specific framework. ([Documentation](./docs/java-maven-noframework.md))
+    - `spring`: Coming soon...
+    - `quarkus`: Coming soon...
+  - **Gradle**:
+    - `noframework`: Coming soon...
+    - `spring`: Coming soon...
+    - `quarkus`: Coming soon...
+
+#### **Examples**:
+1. Create a new Java project using Maven:
+   ```bash
+   craft new java-maven-noframework -c
+   ```
+
+2. Update an existing Java project:
+   ```bash
+   craft update java-maven-noframework
+   ```
+
+[Learn more about crafting new Java projects](./docs/java-maven-noframework.md).
+
+</details>
 
 ---
 
-#### **4. Create an Uber JAR: `make uber-jar`**
-- **Purpose**: Creates an executable JAR file containing all compiled classes and the main class defined in the `MAIN_CLASS` variable.
-- **Usage**:
-  ```bash
-  make uber-jar
-  ```
-- **Effect**:
-  - Compiles all `.java` files (if not already compiled).
-  - Generates an uber JAR named `$(PROJECT_NAME).jar` in the `$(JAR_DIR)` directory.
-  - The JAR includes:
-    - All compiled classes.
-    - A manifest file with the `Main-Class` specified as `$(MAIN_CLASS)`.
+## **📜License**
 
-- **Example**:
-  ```bash
-  make uber-jar
-  ```
-  Output:
-  ```
-  Compiling all files in src/main/java...
-  Creating uber JAR for MyJavaProject...
-  Uber JAR created: jar/MyJavaProject.jar
-  ```
-
----
-
-#### **5. Run the Uber JAR: `make run-jar`**
-- **Purpose**: Runs the uber JAR created by `make uber-jar`.
-- **Usage**:
-  ```bash
-  make run-jar
-  ```
-- **Effect**:
-  - Executes the `$(PROJECT_NAME).jar` file in the `$(JAR_DIR)` directory.
-  - Automatically builds the uber JAR if it doesn’t already exist.
-
-- **Example**:
-  ```bash
-  make run-jar
-  ```
-  Output:
-  ```
-  Creating uber JAR for MyJavaProject...
-  Uber JAR created: jar/MyJavaProject.jar
-  Running uber JAR for MyJavaProject...
-  Hello, Uber JAR!
-  ```
-
-- **Pass Arguments to the JAR**:
-  - Modify the `run-jar` command to pass arguments using the `ARGS` variable:
-    ```bash
-    make run-jar ARGS="arg1 arg2"
-    ```
-  - Example:
-    ```bash
-    make run-jar ARGS="Hello World"
-    ```
-  Output:
-  ```
-  Running uber JAR for MyJavaProject...
-  Hello
-  World
-  ```
-
----
-
-#### **6. Run All Tests: `make test`**
-- **Purpose**: Executes all tests using Maven.
-- **Usage**:
-  ```bash
-  make test
-  ```
-- **Effect**:
-  - Runs `mvn test`, executing all test cases defined in the project.
-
----
-
-#### **7. Clean: `make clean`**
-- **Purpose**: Cleans up build artifacts.
-- **Usage**:
-  ```bash
-  make clean
-  ```
-- **Effect**:
-  - Deletes the `$(BUILD_DIR)` and `$(JAR_DIR)` directories.
-
----
-
-### **Best Practices**
-- **Main Class**: Update the `MAIN_CLASS` variable in the `Makefile` if your main application class is different from `com.main.App`.
-- **Project Name**: Update the `JAR_NAME` variable in the Makefile to reflect your application name.
-
-This `Makefile` simplifies project management inside the container, enabling you to compile, run, package, and clean up your Java project efficiently.
+Licensed under [MIT License](./LICENSE)

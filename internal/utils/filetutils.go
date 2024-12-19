@@ -12,36 +12,14 @@ import (
 )
 
 const (
+	binaryPermissoins    = 0771 // rwxrwx--x
 	filePermissions      = 0664 // rw-rw-r--
 	directoryPermissions = 0775 // rwxrwxr-x
 )
 
-// CopyFile copies a file from src to dst
-func CopyFile(src, dst string) error {
-	sourceFile, err := os.Open(src)
-	if err != nil {
-		return fmt.Errorf("failed to open source file: %w", err)
-	}
-	defer sourceFile.Close()
-
-	destFile, err := os.Create(dst)
-	if err != nil {
-		return fmt.Errorf("failed to create destination file: %w", err)
-	}
-	defer destFile.Close()
-
-	bytesCopied, err := io.Copy(destFile, sourceFile)
-	if err != nil {
-		return fmt.Errorf("failed to copy file contents (bytes copied: %d): %w", bytesCopied, err)
-	}
-
-	err = destFile.Sync()
-	if err != nil {
-		return fmt.Errorf("failed to flush data to destination file: %w", err)
-	}
-
-	return nil
-}
+//-----------------------------------------------------------------------
+// Changing things
+//-----------------------------------------------------------------------
 
 // ChangeWordInFile replaces occurrences of a placeholder with the given replacementWord in a file.
 // It takes the fileName, placeholder, replacementWord, and a flag replaceAll (true to replace all occurrences, false for just the first).
@@ -98,6 +76,71 @@ func ChangeWordInFile(fileName, placeholder, replacementWord string, replaceAll 
 	return nil
 }
 
+//-----------------------------------------------------------------------
+// Removing things
+//-----------------------------------------------------------------------
+
+func RemoveFileFromHost(filePath string) error {
+	err := os.RemoveAll(filePath)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+//-----------------------------------------------------------------------
+// Getting things
+//-----------------------------------------------------------------------
+
+// GetAllEntries retrieves all entries (files and directories) from a given directory on the host filesystem
+func GetAllEntries(dir string) ([]string, error) {
+	entries, err := os.ReadDir(dir)
+	if err != nil {
+		return nil, fmt.Errorf("error reading directory %s: %w", dir, err)
+	}
+
+	var allEntries []string
+	for _, entry := range entries {
+		absPath, err := filepath.Abs(filepath.Join(dir, entry.Name()))
+		if err != nil {
+			return nil, fmt.Errorf("error getting absolute path for %s: %w", entry.Name(), err)
+		}
+		allEntries = append(allEntries, absPath)
+	}
+
+	return allEntries, nil
+}
+
+// GetFilePaths constructs a list of full file paths for multiple files
+func GetFilePaths(basePath string, files []string) []string {
+	var filePaths []string
+	for _, file := range files {
+		filePaths = append(filePaths, filepath.Join(basePath, file))
+	}
+	return filePaths
+}
+
+// GetAllFiles retrieves all file paths from a given directory on the host filesystem
+func GetAllFiles(dir string) ([]string, error) {
+	entries, err := os.ReadDir(dir)
+	if err != nil {
+		return nil, fmt.Errorf("error reading directory %s: %w", dir, err)
+	}
+
+	var files []string
+	for _, entry := range entries {
+		if !entry.IsDir() {
+			absPath, err := filepath.Abs(filepath.Join(dir, entry.Name()))
+			if err != nil {
+				return nil, fmt.Errorf("error getting absolute path for %s: %w", entry.Name(), err)
+			}
+			files = append(files, absPath)
+		}
+	}
+
+	return files, nil
+}
+
 // ListFilesWithPattern lists files in the given fs.FS directory and filters them by a pattern
 func ListFilesWithPattern(fsys fs.FS, dir string, pattern string) ([]string, error) {
 	entries, err := fs.ReadDir(fsys, dir)
@@ -135,58 +178,43 @@ func ListFilesWithPattern(fsys fs.FS, dir string, pattern string) ([]string, err
 	return results, nil
 }
 
-// GetFilePath constructs the full file path given a base path and a file name
-func GetFilePath(basePath, fileName string) string {
-	return filepath.Join(basePath, fileName)
-}
+// -----------------------------------------------------------------------
+// Copying things
+// -----------------------------------------------------------------------
 
-// GetFilePaths constructs a list of full file paths for multiple files
-func GetFilePaths(basePath string, files []string) []string {
-	var filePaths []string
-	for _, file := range files {
-		filePaths = append(filePaths, filepath.Join(basePath, file))
+// CopyAllEntries copies all entries (files and directories) from a source directory to a destination directory
+func CopyAllEntries(sourceDir, destinationDir string) error {
+	entries, err := os.ReadDir(sourceDir)
+	if err != nil {
+		return fmt.Errorf("error reading directory %s: %w", sourceDir, err)
 	}
-	return filePaths
-}
 
-func CopyDirFromFS(fsys fs.FS, sourceDir, destDir string) error {
-	err := fs.WalkDir(fsys, sourceDir, func(path string, d fs.DirEntry, err error) error {
-		if err != nil {
-			fmt.Printf("error walking directory: %w", err)
-			return err
-		}
+	if err := os.MkdirAll(destinationDir, os.ModePerm); err != nil {
+		return fmt.Errorf("error creating directory %s: %w", destinationDir, err)
+	}
 
-		realPath, err := filepath.Rel(sourceDir, path)
-		if err != nil {
-			fmt.Errorf("error calculating relative path: %w", err)
-			return err
-		}
-		targetPath := filepath.Join(destDir, realPath)
+	for _, entry := range entries {
+		sourcePath := filepath.Join(sourceDir, entry.Name())
+		destPath := filepath.Join(destinationDir, entry.Name())
 
-		if d.IsDir() {
-			err = os.MkdirAll(targetPath, directoryPermissions)
-			if err != nil {
-				fmt.Errorf("error creating directory %q: %w", targetPath, err)
+		if entry.IsDir() {
+			// Recursively copy subdirectories
+			if err := CopyDirIntoDir(sourcePath, destinationDir); err != nil {
 				return err
 			}
 		} else {
-			err = CopyFileFromFS(fsys, path, targetPath)
-			if err != nil {
-				fmt.Errorf("error copying file: %w", err)
+			// Copy individual files
+			if err := CopyFile(sourcePath, destPath); err != nil {
 				return err
 			}
 		}
-
-		return nil
-	})
-	if err != nil {
-		return err
 	}
+
 	return nil
 }
 
 func CopyFileFromFS(sourceFS fs.FS, sourcePath string, destPath string) error {
-	fmt.Printf("copy file from fs -> from %v to %v\n", sourcePath, destPath)
+	// fmt.Printf("copy file from fs -> from %v to %v\n", sourcePath, destPath)
 
 	sourceFile, err := sourceFS.Open(sourcePath)
 	if err != nil {
@@ -212,6 +240,36 @@ func CopyFileFromFS(sourceFS fs.FS, sourcePath string, destPath string) error {
 	if err != nil {
 		fmt.Errorf("failed to copy content from %q to %q: %w\n", sourcePath, destPath, err)
 		return err
+	}
+
+	if strings.HasSuffix(destPath, ".sh") {
+		err = os.Chmod(destPath, binaryPermissoins)
+		if err != nil {
+			fmt.Printf("failed to set permissions for %q: %v\n", destPath, err)
+			return err
+		}
+	}
+
+	return nil
+}
+
+// CopyFile copies a file from the source path to the destination path
+func CopyFile(sourcePath, destinationPath string) error {
+	source, err := os.Open(sourcePath)
+	if err != nil {
+		return fmt.Errorf("error opening source file %s: %w", sourcePath, err)
+	}
+	defer source.Close()
+
+	destination, err := os.Create(destinationPath)
+	if err != nil {
+		return fmt.Errorf("error creating destination file %s: %w", destinationPath, err)
+	}
+	defer destination.Close()
+
+	_, err = io.Copy(destination, source)
+	if err != nil {
+		return fmt.Errorf("error copying file from %s to %s: %w", sourcePath, destinationPath, err)
 	}
 
 	return nil

@@ -1,8 +1,47 @@
 ---
+# PROJECT_NAME
+### **How to Start the Project Using Docker**
+
+This project is configured to run inside a Docker container for consistent development environments. Follow the steps below to set up, start, and use the project.
+
+---
+
+### **Steps to Start the Project**
+
+#### **1. Build and Start the Docker Environment**
+Use the provided `docker-compose.dev.yml` file to build and start the development container.
+
+- **Build the container:**
+  ```bash
+  docker compose -f docker-compose.dev.yml build
+  ```
+
+- **Start the container:**
+  ```bash
+  docker compose -f docker-compose.dev.yml up -d
+  ```
+
+- **Confirm the container is running:**
+  ```bash
+  docker ps
+  ```
+  Look for a container named `PROJECT_NAME-java-env`.
+
+#### **2. Connect to the Development Container**
+Once the container is running, connect to it for development purposes.
+
+- **Open a bash session in the container:**
+  ```bash
+  docker exec -it PROJECT_NAME-java-env bash
+  ```
+  - use the `make` command from here on (see the chapter below)
+
 
 ### **How to Use the Makefile (Container Usage)**
 
 This `Makefile` is designed to streamline the process of building, running, testing, and cleaning up a Java project inside a Docker container environment. The commands are optimized to work with a typical Java/Maven project structure and can be executed within the container.
+
+You need to connect to the [development container](#2-connect-to-the-development-container) and can use the `make` commands here (and only here... not outside the container)
 
 ---
 
@@ -62,7 +101,7 @@ This `Makefile` is designed to streamline the process of building, running, test
   ```
 - **Effect**:
   - Compiles all `.java` files (if not already compiled).
-  - Generates an uber JAR named `$(PROJECT_NAME).jar` in the `$(JAR_DIR)` directory.
+  - Generates an uber JAR named `PROJECT_NAME.jar` in the `$(JAR_DIR)` directory.
   - The JAR includes:
     - All compiled classes.
     - A manifest file with the `Main-Class` specified as `MAIN_CLASS`.
@@ -96,10 +135,8 @@ This `Makefile` is designed to streamline the process of building, running, test
   ```
   Output:
   ```
-  Creating uber JAR for PROJECT_NAME...
-  Uber JAR created: jar/PROJECT_NAME.jar
-  Running uber JAR for PROJECT_NAME...
-  Hello, Uber JAR!
+  Running uber JAR for PROJECT_NAME without arguments...
+  Hello World!
   ```
 
 - **Pass Arguments to the JAR**:
@@ -109,14 +146,15 @@ This `Makefile` is designed to streamline the process of building, running, test
     ```
   - Example:
     ```bash
-    make run-jar ARGS="Hello World"
+    make run-jar ARGS="foo bar"
     ```
   Output:
   ```
-  Running uber JAR for PROJECT_NAME...
-  Hello
-  World
+  Running uber JAR for PROJECT_NAME with arguments: foo bar...
+  Hello World!
   ```
+> [!NOTE]
+> The arguments of "foo" and "bar" do not appear in the programm output since the App.java does not evaluate them... but if you had logic depending on the args, this run command would pass them correctly to the PROJECT_NAME.jar
 
 ---
 
@@ -149,5 +187,3 @@ This `Makefile` is designed to streamline the process of building, running, test
 This `Makefile` simplifies project management inside the container, enabling you to compile, run, package, and clean up your Java project efficiently.
 
 ---
-
-This version retains `PROJECT_NAME` throughout so it can be dynamically replaced by your script. Let me know if you need further customization!

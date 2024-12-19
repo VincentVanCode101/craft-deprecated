@@ -10,14 +10,16 @@ fi
 ARTIFACT_ID=$1
 GROUP_ID="com.main"
 OUTPUT_DIR="/build-space/$ARTIFACT_ID"
-user_id=$(id -u)
-GID=$(id -g)
+U_ID=$(id -u)
+G_ID=$(id -g)
 
+DOCKERFILE="build.Dockerfile"
 DOCKER_IMAGE_NAME="maven-project-generator"
 
 docker build \
-  --build-arg UID=$user_id \
-  --build-arg GID=$GID \
+  -f $DOCKERFILE \
+  --build-arg UID=$U_ID \
+  --build-arg G_ID=$G_ID \
   --build-arg GROUP_ID=$GROUP_ID \
   --build-arg ARTIFACT_ID=$ARTIFACT_ID \
   -t $DOCKER_IMAGE_NAME .
