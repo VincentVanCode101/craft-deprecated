@@ -155,11 +155,8 @@ This `Makefile` is designed to simplify building, running, and cleaning up a Go 
 
 The pre-commit hook script ensures that your code passes static analysis checks (`golint`) and is properly formatted (`gofmt`) before commits. 
 
-#### **How to Use the Pre-Commit Hook**
-
 1. **Ensure the Development Container is Running**
    Make sure the container is running by following the steps in [Build and start the docker environment](#1-build-and-start-the-docker-environment) section above.
-### **Steps to Start the Project**
 
 2. **Run the Pre-Commit Hook**
    The pre-commit hook checks for linting issues and formatting problems using tools inside the container.
