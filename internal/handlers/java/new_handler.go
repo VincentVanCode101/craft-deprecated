@@ -96,7 +96,7 @@ func (handler *NewJavaHandler) setupNoFrameworkMavenProject(projectDirOnHost, pr
 		return err
 	}
 
-	return fmt.Errorf("setting up a plain Java project without a framework for Maven is not yet implemented")
+	return fmt.Errorf("setting up a plain Java project without a framework for Maven is not implemented fully... a docker image named 'maven-project-generator:latest' is on your host and isn't cleaned up (can be done by running: 'docker image rm maven-project-generator:latest')")
 }
 
 func (handler *NewJavaHandler) copyTemplateFilesToHost(templatesPath, projectDirOnHost string) error {
