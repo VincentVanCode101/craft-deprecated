@@ -159,9 +159,9 @@ Allowed Operations:
 
 # 🌐Supported Languages
 
-<span style="display: flex; align-items: center; gap: 10px; font-size: 2rem; font-weight: bold; line-height: 1;">
+<h2 style="display: flex; align-items: center; gap: 10px; font-size: 2rem; font-weight: bold; line-height: 1;">
   Go <img src="./assets/gopher.png" alt="Go Logo" style="height: 2rem;"/>
-</span>
+</h2>
 
 <details>
 <summary>more</summary>
