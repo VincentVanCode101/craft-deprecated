@@ -40,6 +40,7 @@ Once the container is running, connect to it for development purposes.
 This `Makefile` is designed to simplify building, running, and cleaning up a Go application. It includes commands for building the application for local and Linux environments, running the binary, and cleaning up build artifacts.
 
 You need to connect to the [development container](#2-connect-to-the-development-container) and can use the `make` commands here (and only here... not outside the container)
+
 ---
 
 ### **Commands Overview**
