@@ -53,7 +53,7 @@ PROJECT_NAME/
 │       └── java/
 │           └── com/
 │               └── main/
-│                   └── AppTest.java    # Sample test class
+│                   └── AppTest.java # Sample test class
 ├── docker-compose.dev.yml  # Docker setup for local development
 ├── Makefile                # Build and run commands in Docker
 ├── README.md               # Initial project documentation
@@ -116,6 +116,10 @@ The generated project includes a `Makefile` that simplifies the following operat
 - **Run the application**:
   ```bash
   make run
+  ```
+- **Run specific Java files**:
+  ```bash
+  make run ARGS=src/main/java/com/main/foo/bar.java
   ```
 - **Create an executable JAR**:
   ```bash

@@ -147,8 +147,59 @@ This `Makefile` is designed to simplify building, running, and cleaning up a Go 
 
 ---
 
-### **Best Practices**
+#### **Best Practices**
 - **Binary Name**: Update the `BINARY_NAME` variable to reflect your application name.
 - **Main Package**: Ensure the `MAIN_PACKAGE` points to your main Go file (default is `./main.go`).
+
+### **Using the Pre-Commit Hook**
+
+The pre-commit hook script ensures that your code passes static analysis checks (`golint`) and is properly formatted (`gofmt`) before commits. 
+
+#### **How to Use the Pre-Commit Hook**
+
+1. **Ensure the Development Container is Running**
+   Make sure the container is running by following the steps in [Build and start the docker environment](#1-build-and-start-the-docker-environment) section above.
+### **Steps to Start the Project**
+
+2. **Run the Pre-Commit Hook**
+   The pre-commit hook checks for linting issues and formatting problems using tools inside the container.
+
+   - **Execute the script:**
+     ```bash
+     ./pre-commit
+     ```
+
+   - **What It Does:**
+     - Runs `golint` to identify coding issues.
+     - Runs `gofmt` to ensure proper formatting.
+     - Outputs results with color-coded messages.
+
+#### **Expected Output**
+- **Successful Checks:**
+  If all checks pass:
+  ```bash
+  golint passed.
+  gofmt passed.
+  Pre-commit checks passed!
+  ```
+
+- **Failed Checks:**
+  If issues are detected:
+  - **`golint` issues:**
+    ```bash
+    golint detected issues:
+    path/to/file.go:line:col: Description of issue
+    ```
+  - **`gofmt` issues:**
+    ```bash
+    gofmt detected improperly formatted files:
+    path/to/file.go
+    ```
+
+#### **Fix Issues**
+- Address the issues reported by `golint` and `gofmt`.
+- Rerun the `./pre-commit` script to verify that the issues have been resolved.
+
+---
 
 This `Makefile` simplifies project management by providing quick commands for building, running, and cleaning your Go application, as well as preparing it for Linux deployment.
