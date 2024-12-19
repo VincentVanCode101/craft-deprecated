@@ -1,3 +1,5 @@
+## Go Template
+
 ## Overview
 This document describes the files and structure of the Go template provided by the `Craft` CLI tool. This template sets up a Go project with essential configuration files, Docker support, and a Makefile for streamlined development. It also explains how to get the project up and running in a docker container
 

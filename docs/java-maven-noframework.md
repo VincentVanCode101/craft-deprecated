@@ -1,4 +1,3 @@
-# PROJECT_NAME
 ## Java Maven No Framework Template
 
 ## Overview
