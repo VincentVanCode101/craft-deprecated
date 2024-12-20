@@ -1,7 +1,7 @@
 ## Java Maven No Framework Template
 
 ## Overview
-This document describes the files and structure of the `java-maven-noframework` template used by the `Craft` CLI tool. This template creates a lightweight Java project using Maven without any specific frameworks, enabling quick setup and easy customization. It also explains how to get the project up and running in a docker container
+This document describes the files and structure of the `java` template (maven with not dependencies) used by the `Craft` CLI tool. This template creates a lightweight Java project using Maven without any specific frameworks, enabling quick setup and easy customization. It also explains how to get the project up and running in a docker container
 
 ### **Steps to Start the Project**
 
