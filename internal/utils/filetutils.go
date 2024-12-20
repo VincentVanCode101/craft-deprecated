@@ -165,11 +165,9 @@ func ListFilesWithPattern(fsys fs.FS, dir string, pattern string) ([]string, err
 
 		name := entry.Name()
 
-		fileInfo, err := entry.Info()
 		if err != nil {
 			return []string{}, err
 		}
-		fmt.Printf("the file info %v\n", fileInfo)
 
 		if re == nil || re.MatchString(name) {
 			results = append(results, name)
