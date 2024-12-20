@@ -22,12 +22,12 @@ func (h *NewJavaHandler) SetTemplatesFS(fs fs.FS) {
 
 const placeHolder = "PROJECT_NAME"
 
-func (handler *NewJavaHandler) Run(createDirectoryFor bool, projectName string) error {
+func (handler *NewJavaHandler) Run(projectName string) error {
 	if handler.BuildTool == "" || handler.Framework == "" {
 		return fmt.Errorf("invalid configuration: Build Tool or Framework not specified")
 	}
 
-	projectDirOnHost, err := utils.PrepareProjectDir(createDirectoryFor, projectName)
+	projectDirOnHost, err := utils.PrepareProjectDir(projectName)
 	if err != nil {
 		return fmt.Errorf("failed to get current working directory: %v", err)
 	}

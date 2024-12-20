@@ -6,8 +6,6 @@ import (
 	"craft/registry"
 	"embed"
 	"fmt"
-	"os"
-	"path/filepath"
 	"strings"
 
 	"github.com/spf13/cobra"
@@ -17,8 +15,7 @@ import (
 // It supports specifying a project name or using the current directory as the project name.
 // Templates for the project are embedded in the provided templatesFS parameter.
 func NewNewCmd(templatesFS embed.FS) *cobra.Command {
-	var useCurrentDirName bool
-	var name string
+	var specifiedProjectName string
 
 	allowedLanguages := registry.GetAllowedLanguages("new")
 	allowedLanguagesText := strings.Join(allowedLanguages, ", ")
@@ -44,11 +41,7 @@ func NewNewCmd(templatesFS embed.FS) *cobra.Command {
 				return err
 			}
 
-			if name == "" && !useCurrentDirName {
-				return fmt.Errorf("Run 'craft new <language>' with either --name <name> (-n <name>) or --current-dir-name (-c) to specify the project name.")
-			}
-
-			createDirectoryFor, projectName := getProjectDetails(useCurrentDirName, name)
+			projectName := getProjectDetails(specifiedProjectName, language)
 
 			languageStrings := strings.Split(strings.ToLower(language), "-")
 			handler, err := handlers.GetNewHandler(languageStrings)
@@ -56,7 +49,7 @@ func NewNewCmd(templatesFS embed.FS) *cobra.Command {
 				return err
 			}
 			handler.SetTemplatesFS(&templatesFS)
-			err = handler.Run(createDirectoryFor, projectName)
+			err = handler.Run(projectName)
 			if err != nil {
 				return err
 			}
@@ -67,25 +60,15 @@ func NewNewCmd(templatesFS embed.FS) *cobra.Command {
 		SilenceUsage: true,
 	}
 
-	cmd.Flags().BoolVarP(&useCurrentDirName, "current-dir-name", "c", false, "Use the current directory name for the new project. The new files will be created in the current directory without creating a new one.")
-	cmd.Flags().StringVarP(&name, "name", "n", "", "Specify a name for the new project. A new directory with this name will be created, and the files will be placed inside it.")
+	cmd.Flags().StringVarP(&specifiedProjectName, "name", "n", "", "Specify a name for the new project. A new directory with this name will be created, and the files will be placed inside it.")
 
 	return cmd
 }
 
-func getProjectDetails(useCurrentDirName bool, name string) (bool, string) {
-	if name != "" {
-		return true, name
+func getProjectDetails(specifiedProjectName, language string) string {
+	if specifiedProjectName != "" {
+		return specifiedProjectName
 	}
 
-	if useCurrentDirName {
-		wd, err := os.Getwd()
-		if err != nil {
-			fmt.Println("Error fetching current directory:", err)
-			return true, "run-app" // default name
-		}
-		return false, filepath.Base(wd)
-	}
-
-	return false, ""
+	return fmt.Sprintf("%v-%v", constants.Tool_name, language)
 }

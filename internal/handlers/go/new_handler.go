@@ -29,11 +29,11 @@ var (
 	filesThatNeedProjectNameAdjusted = []string{"go.mod.template", "docker-compose.dev.yml", "Makefile"}
 )
 
-func (handler *NewGoHandler) Run(createDirectoryFor bool, projectName string) error {
+func (handler *NewGoHandler) Run(projectName string) error {
 	var projectDirOnHost string
 	var err error
 
-	projectDirOnHost, err = utils.PrepareProjectDir(createDirectoryFor, projectName)
+	projectDirOnHost, err = utils.PrepareProjectDir(projectName)
 	if err != nil {
 		fmt.Printf("Failed to get current working directory: %v\n", err)
 		return err
