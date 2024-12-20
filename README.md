@@ -29,12 +29,13 @@ The `Craft` CLI is a tool designed to simplify the process of bootstrapping new 
 
 While exploring new languages or starting small projects, I encountered several issues with existing scaffolding tools:
 
-1. **Target Language Dependencies**: Most tools require you to have the target language installed to use them, making setup cumbersome.  
-2. **Language-Specific Tools**: Existing tools are often tied to a single language, limiting flexibility for multi-language workflows.  
+1. **Language-Specific Tools**: Existing tools are often tied to a single language, limiting flexibility for multi-language workflows.  
+2. **Language or Runtime-Specific Dependencies**: Most tools require the target language or its runtime to be installed on the machine, making setup cumbersome.
 3. **Complex Projects**: These tools often generate large, interconnected setups that can be overwhelming for beginners or unnecessary for small tasks.  
 4. **No Dockerized Setup**: Few tools create a containerized environment, making it harder to run the created projects in isolated and consistent environments.
 
-These problems slow down productivity, create barriers for quickly experimenting with a new language or solving coding challenges, and result in projects that do not run in a containerized, isolated setup. Running projects in Docker containers ensures consistency by providing a uniform environment across systems, eliminating 'it works on my machine' issues, isolating dependencies, and enabling easy cleanup or switching between projects without affecting the host system.
+These problems slow down productivity, create barriers for quickly experimenting with a new language or solving coding challenges, and result in projects that do not run in a containerized, isolated setup.
+  - Running projects in Docker containers ensures consistency by providing a uniform environment across systems, eliminating 'it works on my machine' issues, isolating dependencies, and enabling easy cleanup or switching between projects without affecting the host system.
 
 ---
 
