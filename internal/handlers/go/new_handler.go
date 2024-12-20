@@ -12,8 +12,9 @@ import (
 )
 
 type NewGoHandler struct {
-	Language    string
-	TemplatesFS fs.FS
+	Dependencies []string
+	Language     string
+	TemplatesFS  fs.FS
 }
 
 func (handler *NewGoHandler) SetTemplatesFS(fs fs.FS) {

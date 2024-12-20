@@ -20,7 +20,7 @@ func PrepareProjectDir(projectName string) (string, error) {
 		return "", fmt.Errorf("could not create project directory: %w", err)
 	}
 
-	fmt.Printf("A new project folder with the name %v was created", projectName)
+	fmt.Printf("A new project folder with the name %v was created\n", projectName)
 	return projectDir, nil
 
 }
