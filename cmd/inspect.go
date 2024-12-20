@@ -3,14 +3,13 @@ package cmd
 import (
 	"craft/registry"
 	"fmt"
-	"strings"
 
 	"github.com/spf13/cobra"
+	"golang.org/x/text/cases"
+	"golang.org/x/text/language"
 )
 
 // NewInspectCmd creates a new "inspect" command that displays allowed operations and languages.
-// This command is part of the CLI application and is used to provide users with
-// information about the supported operations and their associated languages.
 func NewInspectCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "inspect",
@@ -25,7 +24,15 @@ func NewInspectCmd() *cobra.Command {
 
 func showAllowedOptions() {
 	fmt.Println("Allowed Operations and Languages:")
+
+	titleCaser := cases.Title(language.English) // Use English for title casing
+
 	for operation, languages := range registry.AllowedOperationsWithLanguages {
-		fmt.Printf("- %s: {%v}\n", operation, strings.Join(languages, ", "))
+		fmt.Printf("- Operation: %s\n", titleCaser.String(operation))
+		for _, language := range languages {
+			fmt.Printf("  * Language: %s\n", titleCaser.String(language))
+			fmt.Printf("    Run 'craft %s %s --help' to see the available dependencies.\n",
+				operation, language)
+		}
 	}
 }

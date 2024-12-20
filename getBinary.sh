@@ -10,6 +10,8 @@ readonly IMAGE_NAME="craft-exec:latest"
 readonly BINARY_NAME="craft"
 readonly LOCAL_BIN="/usr/local/bin"
 readonly SYMLINK_NAME="craft"
+readonly ICON_PATH="$SCRIPT_DIR/assets/hammer-and-wrench.svg"
+readonly NOTIFY_DURATION=4000 # Notification duration in milliseconds
 
 # Load utility functions
 source "$SCRIPT_DIR/utils.sh"
@@ -41,6 +43,26 @@ create_symlink() {
 }
 
 #######################################
+# Sends a desktop notification to the user.
+# Globals:
+#   NOTIFY_DURATION
+#   ICON_PATH
+# Arguments:
+#   $1: Notification title
+#   $2: Notification message
+#######################################
+notify_user() {
+  local title="$1"
+  local message="$2"
+
+  if command -v notify-send &>/dev/null; then
+    notify-send -t "$NOTIFY_DURATION" -i "$ICON_PATH" "$title" "$message"
+  else
+    log "WARN" "notify-send is not installed. Skipping user notification."
+  fi
+}
+
+#######################################
 # Main function to build the Docker image, extract the binary,
 # and set up the symlink.
 # Globals:
@@ -64,6 +86,8 @@ main() {
   log "INFO" "Binary extracted to $binary_path"
 
   create_symlink "$binary_path"
+
+  notify_user "Build Complete" "The $BINARY_NAME build and setup process is complete!"
 }
 
 main "$@"

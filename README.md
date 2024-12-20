@@ -11,6 +11,9 @@ The `Craft` CLI is a tool designed to simplify the process of bootstrapping new 
 - 🌐 **Multi-Language Support**: Works with Go, Java, and other supported languages.  
 - 🏎️ **Small and Fast**: A lightweight CLI tool designed for quick execution.  
 - 💡 **Efficient and Reliable**: Helps you start and maintain projects effortlessly.  
+- 🏗️ **almost no dependecies**: Requires only Docker to build and run your projects. There's no need to install any other language runtimes, compilers, or frameworks locally.
+
+See why `Craft` solves the [problems of other scaffolding tools](#problems-with-other-scaffolding-tools) where I explain how it addresses common pitfalls and inefficiencies.
 
 ## **Table of Contents**
 
@@ -35,14 +38,14 @@ While exploring new languages or starting small projects, I encountered several 
 4. **No Dockerized Setup**: Few tools create a containerized environment, making it harder to run the created projects in isolated and consistent environments.
 
 These problems slow down productivity, create barriers for quickly experimenting with a new language or solving coding challenges, and result in projects that do not run in a containerized, isolated setup.
-  - Running projects in Docker containers ensures consistency by providing a uniform environment across systems, eliminating 'it works on my machine' issues, isolating dependencies, and enabling easy cleanup or switching between projects without affecting the host system.
+  - Running projects in Docker containers ensures consistency by providing a uniform environment across systems, eliminating 'it works on my machine' issues, isolating dependencies, and enabling easy cleanup or switching between projects without affecting the host system. ([see Docker](https://www.docker.com/))
 
 ---
 
 ## 🛠️ Why Use Craft?
 
 - **Dockerized Development**: Automatically creates a containerized environment for every project, so you don’t need the language or runtime installed on your machine.
-- **Lightweight and Fast**: Runs as a precompiled binary, ensuring fast execution without additional dependencies required on your host.
+- **Lightweight and Fast**: Runs as a precompiled binary, ensuring fast execution without additional dependencies required on your host, expect for docker to setup some project dynamically.
 - **Multi-Language Support**: Works seamlessly across multiple languages, making it versatile for various tasks.
 - **Minimal Setup**: Generates only the essential files needed to start coding, with the option to create more complex setups if you’re familiar with the language. This allows you to build and structure your project the way you want.
 - **Beginner-Friendly**: Focuses on simplicity and clarity, giving you exactly what you need to get started with a new language or task.
@@ -51,14 +54,15 @@ These problems slow down productivity, create barriers for quickly experimenting
 
 - **Project Scaffolding** (`new` command):
   - Quickly generate project files and structure for supported languages and frameworks.
-  - Embedded templates ensure a consistent starting point for new projects.
+  - Automatically creates a new directory named `craft-<language>` for every project.
+  - Specify dependencies for projects using the `--dependencies` flag.
 
 - **Inspection** (`inspect` command):
   - View all allowed operations and their supported language/framework combinations.
 
-- **Flexible Project Naming**:
-  - Use the current directory name as the project name.
-  - Specify a custom project name with a command-line flag.
+- **Flexible Project Setup**:
+  - Specify a custom project name using the `--name` flag.
+  - View available dependencies for a specific language using the `--show-dependencies` flag.
 
 - **Docker-Ready**:
   - Generated and updated projects are pre-configured to run in Docker containers.
@@ -91,20 +95,31 @@ craft new <language>
 
 #### Options:
 - `--name, -n`: Specify a name for the new project.
-- `--current-dir-name, -c`: Use the current directory name for the project.
+- `--dependencies, -d`: Specify the dependencies or project type (e.g., -d maven-spring).
+- `--show-dependencies`: Show supported dependencies for the specified language.
 
 #### Examples:
-1. Generate a Go project in the current directory:
+1. Generate a Go project named `craft-go`:
    ```bash
-   craft new go -c
+   craft new go
    ```
 
-2. Generate a new Java project with Maven in a directory named `MyJavaApp`:
+2. Generate a new Java project with Maven and Spring Boot in a directory named `MyJavaApp`:
    ```bash
-   craft new java-maven-noframework -n MyJavaApp
+   craft new java --name MyJavaApp --dependencies maven,spring
    ```
+3. Show dependencies for the language `java`
+- example output:
+```
+Maven is the default build-tool for the java projects:
 
-3. View help for the `new` command:
+Supported Dependencies:
+  with the build tool 'maven' are:
+    - Springboot
+    - Quarkus
+```
+
+4. View help for the `new` command:
    ```bash
    craft new --help
    ```
@@ -117,15 +132,14 @@ View all allowed operations and their supported languages/framework combinations
 ```bash
 craft inspect
 ```
-
-#### **Example**:
-```bash
-craft inspect
-```
 Example output:
 ```
-Allowed Operations:
-- new: go, java-maven-noframework
+Allowed Operations and Languages:
+- Operation: New
+  * Language: Java
+    Run 'craft new java --help' to see the available dependencies.
+  * Language: Go
+    Run 'craft new go --help' to see the available dependencies.
 ```
 
 ---
@@ -143,17 +157,16 @@ Allowed Operations:
   - `new`: Create a new Go project ([Documentation](./docs/go.md)).
   
 #### **Examples**:
-1. Create a new Go project:
+1. Create a new Go project with the name `my-go-project`:
    ```bash
-   craft new go -c
+   craft new go --name my-go-project
    ```
 
-2. Update an existing Go project:
+2. Create a new Go project with the dependency `ncurses`:
    ```bash
-   craft update go
+   craft new go --name my-go-project --dependencies ncurses
    ```
 
-[Learn more about crafting new Go projects](./docs/go.md).
 
 </details>
 
@@ -166,21 +179,16 @@ Allowed Operations:
 
 - **Allowed Build Tools and Frameworks**:
   - **Maven**:
-    - `noframework`: Create a Java projects without any specific framework. ([Documentation](./docs/java-maven-noframework.md))
+    - `default`: Create a Java projects without any specific any dependencies will setup a plain java project with maven as the build tool. ([Documentation](./docs/java-maven-default.md))
 
     **Example**:
    Create a new Java project using Maven:
     ```bash
-    craft new java-maven-noframework -c
+    craft new java -c
     ```
-    - `spring`: Coming soon...
-    - `quarkus`: Coming soon...
-  - **Gradle**:
-    - `noframework`: Coming soon...
-    - `spring`: Coming soon...
+    - `springboot`: Coming soon...
     - `quarkus`: Coming soon...
 
-[Learn more about crafting new Java projects](./docs/java-maven-noframework.md).
 
 </details>
 
