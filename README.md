@@ -13,11 +13,11 @@ The `Craft` CLI is a tool designed to simplify the process of bootstrapping new 
 - 💡 **Efficient and Reliable**: Helps you start and maintain projects effortlessly.  
 - 🏗️ **almost no dependecies**: Requires only Docker to build and run your projects. There's no need to install any other language runtimes, compilers, or frameworks locally.
 
-See why `Craft` solves the [problems of other scaffolding tools](#-problems-with-other-scaffolding-tools) where I explain how it addresses common pitfalls and inefficiencies.
+See why `Craft` solves the [problems of other scaffolding tools](#️-problems-with-other-scaffolding-tools) where I explain how it addresses common pitfalls and inefficiencies.
 
 ## **Table of Contents**
 
-- [Problems with Other Scaffolding Tools](#-problems-with-other-scaffolding-tools)
+- [Problems with Other Scaffolding Tools](#️-problems-with-other-scaffolding-tools)
 - [Why Use Craft](#️-why-use-craft)
 - [Features](#-features)
 - [Installation](#-installation)
