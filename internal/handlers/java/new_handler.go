@@ -22,7 +22,7 @@ func (h *NewJavaHandler) SetTemplatesFS(fs fs.FS) {
 	h.TemplatesFS = fs
 }
 
-const placeHolder = "PROJECT_NAME"
+const projectNamePlaceHolder = "PROJECT_NAME"
 
 // Supported combinations of dependencies
 var allowedCombinations = map[string][]string{
@@ -34,12 +34,12 @@ func GetAllowedCombinations() map[string][]string {
 	return allowedCombinations
 }
 
-func (handler *NewJavaHandler) evaluateDependencies() error {
+func (h *NewJavaHandler) evaluateDependencies() error {
 	// Default values
-	handler.BuildTool = "maven"
-	handler.Framework = "" // Default: No specific framework
+	h.BuildTool = "maven"
+	h.Framework = "" // Default: No specific framework
 
-	for _, dependency := range handler.Dependencies {
+	for _, dependency := range h.Dependencies {
 		lowerDep := strings.ToLower(dependency)
 		if !isValidDependency(lowerDep) {
 			return fmt.Errorf("unsupported dependency '%s'. Allowed dependencies are: %s",
@@ -48,18 +48,18 @@ func (handler *NewJavaHandler) evaluateDependencies() error {
 
 		switch lowerDep {
 		case "spring", "springboot":
-			handler.Framework = "springboot"
+			h.Framework = "springboot"
 		case "quarkus":
-			handler.Framework = "quarkus"
+			h.Framework = "quarkus"
 		case "gradle":
-			handler.BuildTool = "gradle"
+			h.BuildTool = "gradle"
 		case "maven":
-			handler.BuildTool = "maven"
+			h.BuildTool = "maven"
 		}
 	}
 
 	// Validate the combination of build tool and framework
-	if err := validateCombination(handler.BuildTool, handler.Framework); err != nil {
+	if err := validateCombination(h.BuildTool, h.Framework); err != nil {
 		return err
 	}
 
@@ -122,96 +122,96 @@ func isValidDependency(dependency string) bool {
 	return false
 }
 
-func (handler *NewJavaHandler) Run(projectName string) error {
+func (h *NewJavaHandler) Run(projectName string) error {
 	// Evaluate dependencies to determine BuildTool and Framework
-	if err := handler.evaluateDependencies(); err != nil {
+	if err := h.evaluateDependencies(); err != nil {
 		return err
 	}
 
-	if handler.BuildTool == "" {
+	if h.BuildTool == "" {
 		return fmt.Errorf("invalid configuration: Build Tool not specified")
 	}
 
-	projectDirOnHost, err := utils.PrepareProjectDir(projectName)
+	projectHostDir, err := utils.PrepareProjectDir(projectName)
 	if err != nil {
 		return fmt.Errorf("failed to get current working directory: %v", err)
 	}
 
-	switch handler.BuildTool {
+	switch h.BuildTool {
 	case "maven":
-		return handler.handleMavenProject(projectDirOnHost, projectName)
+		return h.handleMavenProject(projectHostDir, projectName)
 	case "gradle":
-		return handler.handleGradleProject()
+		return h.handleGradleProject()
 	default:
-		return fmt.Errorf("unsupported build tool '%s'", handler.BuildTool)
+		return fmt.Errorf("unsupported build tool '%s'", h.BuildTool)
 	}
 }
 
-func (handler *NewJavaHandler) handleMavenProject(projectDirOnHost, projectName string) error {
-	switch handler.Framework {
+func (h *NewJavaHandler) handleMavenProject(projectHostDir, projectName string) error {
+	switch h.Framework {
 	case "":
 		// Default case: No specific framework
-		return handler.setupDefaultMavenProject(projectDirOnHost, projectName)
+		return h.setupDefaultMavenProject(projectHostDir, projectName)
 	case "quarkus":
 		return fmt.Errorf("setting up a Quarkus project with Maven is not yet implemented")
 	case "springboot":
 		return fmt.Errorf("setting up a Spring Boot project with Maven is not yet implemented")
 	default:
-		return fmt.Errorf("unsupported framework '%s' for Maven", handler.Framework)
+		return fmt.Errorf("unsupported framework '%s' for Maven", h.Framework)
 	}
 }
 
-func (handler *NewJavaHandler) handleGradleProject() error {
-	switch handler.Framework {
+func (h *NewJavaHandler) handleGradleProject() error {
+	switch h.Framework {
 	case "":
 		// Default case: No specific framework
 		return fmt.Errorf("setting up a plain Java project for Gradle is not yet implemented")
 	case "quarkus":
 		return fmt.Errorf("setting up a Quarkus project with Gradle is not yet implemented")
 	default:
-		return fmt.Errorf("unsupported framework '%s' for Gradle", handler.Framework)
+		return fmt.Errorf("unsupported framework '%s' for Gradle", h.Framework)
 	}
 }
 
-func (handler *NewJavaHandler) setupDefaultMavenProject(projectDirOnHost, projectName string) error {
+func (h *NewJavaHandler) setupDefaultMavenProject(projectHostDir, projectName string) error {
 	filesThatNeedProjectNameAdjustedOnce := []string{"docker-compose.dev.yml", "Makefile", "README.md"}
 	filesThatNeedProjectNameAdjustedEverywhere := []string{"README.md"}
 	filesThatNeedToBeRemoved := []string{"build.Dockerfile", "create_java_project.sh"}
 
-	templatesPath := filepath.Join("templates", handler.Language, handler.BuildTool, "default")
-	if err := handler.copyTemplateFilesToHost(templatesPath, projectDirOnHost); err != nil {
+	languageTemplatePath := filepath.Join("templates", h.Language, h.BuildTool, "default")
+	if err := h.copyTemplateFilesToHost(languageTemplatePath, projectHostDir); err != nil {
 		return err
 	}
 
-	scriptPath := filepath.Join(projectDirOnHost, "create_java_project.sh")
-	if err := handler.executeProjectSetupScript(scriptPath, projectName, projectDirOnHost); err != nil {
+	scriptPath := filepath.Join(projectHostDir, "create_java_project.sh")
+	if err := h.executeProjectSetupScript(scriptPath, projectName, projectHostDir); err != nil {
 		return err
 	}
 
-	if err := handler.cleanupFiles(projectDirOnHost, filesThatNeedToBeRemoved); err != nil {
+	if err := h.cleanupFiles(projectHostDir, filesThatNeedToBeRemoved); err != nil {
 		return err
 	}
 
-	javaProjectPath := filepath.Join(projectDirOnHost, projectName)
+	javaProjectPath := filepath.Join(projectHostDir, projectName)
 	if err := utils.CopyAllOnePathUpAndRemoveDir(javaProjectPath); err != nil {
 		return err
 	}
 
-	if err := handler.adjustProjectNames(projectDirOnHost, filesThatNeedProjectNameAdjustedOnce, filesThatNeedProjectNameAdjustedEverywhere, projectName); err != nil {
+	if err := h.adjustProjectNames(projectHostDir, filesThatNeedProjectNameAdjustedOnce, filesThatNeedProjectNameAdjustedEverywhere, projectName); err != nil {
 		return err
 	}
 
 	return fmt.Errorf("setting up a plain Java project for Maven is not implemented fully... a docker image named 'maven-project-generator:latest' is on your host and isn't cleaned up (can be done by running: 'docker image rm maven-project-generator:latest')")
 }
 
-func (handler *NewJavaHandler) copyTemplateFilesToHost(templatesPath, projectDirOnHost string) error {
-	if err := utils.CopyDirFromFS(handler.TemplatesFS, templatesPath, projectDirOnHost); err != nil {
+func (handler *NewJavaHandler) copyTemplateFilesToHost(languageTemplatePath, projectHostDir string) error {
+	if err := utils.CopyDirFromFS(handler.TemplatesFS, languageTemplatePath, projectHostDir); err != nil {
 		return fmt.Errorf("error copying files from template path: %v", err)
 	}
 	return nil
 }
 
-func (handler *NewJavaHandler) executeProjectSetupScript(scriptPath, projectName, projectDirOnHost string) error {
+func (handler *NewJavaHandler) executeProjectSetupScript(scriptPath, projectName, projectHostDir string) error {
 	if err := os.Chmod(scriptPath, 0771); err != nil {
 		return fmt.Errorf("error setting execute permissions on script: %v", err)
 	}
@@ -219,7 +219,7 @@ func (handler *NewJavaHandler) executeProjectSetupScript(scriptPath, projectName
 	execCmd := exec.Command(scriptPath, projectName)
 	execCmd.Stdout = os.Stdout
 	execCmd.Stderr = os.Stderr
-	execCmd.Dir = projectDirOnHost
+	execCmd.Dir = projectHostDir
 
 	if err := execCmd.Run(); err != nil {
 		return fmt.Errorf("error executing setup script: %v", err)
@@ -227,9 +227,9 @@ func (handler *NewJavaHandler) executeProjectSetupScript(scriptPath, projectName
 	return nil
 }
 
-func (handler *NewJavaHandler) cleanupFiles(projectDirOnHost string, files []string) error {
+func (handler *NewJavaHandler) cleanupFiles(projectHostDir string, files []string) error {
 	for _, file := range files {
-		filePath := filepath.Join(projectDirOnHost, file)
+		filePath := filepath.Join(projectHostDir, file)
 		if err := utils.RemoveFileFromHost(filePath); err != nil {
 			return fmt.Errorf("error removing file '%s': %v", filePath, err)
 		}
@@ -237,15 +237,15 @@ func (handler *NewJavaHandler) cleanupFiles(projectDirOnHost string, files []str
 	return nil
 }
 
-func (handler *NewJavaHandler) adjustProjectNames(projectDirOnHost string, onceFiles, everywhereFiles []string, projectName string) error {
+func (handler *NewJavaHandler) adjustProjectNames(projectHostDir string, onceFiles, everywhereFiles []string, projectName string) error {
 	for _, filePath := range onceFiles {
-		if err := utils.ChangeWordInFile(filepath.Join(projectDirOnHost, filePath), placeHolder, projectName, false); err != nil {
+		if err := utils.ChangeWordInFile(filepath.Join(projectHostDir, filePath), projectNamePlaceHolder, projectName, false); err != nil {
 			return fmt.Errorf("error adjusting project name in file '%s': %v", filePath, err)
 		}
 	}
 
 	for _, filePath := range everywhereFiles {
-		if err := utils.ChangeWordInFile(filepath.Join(projectDirOnHost, filePath), placeHolder, projectName, true); err != nil {
+		if err := utils.ChangeWordInFile(filepath.Join(projectHostDir, filePath), projectNamePlaceHolder, projectName, true); err != nil {
 			return fmt.Errorf("error adjusting project name in file '%s': %v", filePath, err)
 		}
 	}
