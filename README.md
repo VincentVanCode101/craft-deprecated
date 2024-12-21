@@ -179,7 +179,7 @@ Allowed Operations and Languages:
 
 - **Allowed Build Tools and Frameworks**:
   - **Maven**:
-    - `default`: Create a Java projects without any specific any dependencies will setup a plain java project with maven as the build tool. ([Documentation](./docs/java-maven-default.md))
+    - `default`: Create a Java projects without any specific dependencies will setup a plain java project with maven as the build tool. ([Documentation](./docs/java-maven-default.md))
 
     **Example**:
    Create a new Java project using Maven:
