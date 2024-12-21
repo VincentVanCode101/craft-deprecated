@@ -9,7 +9,6 @@ fi
 
 ARTIFACT_ID=$1
 GROUP_ID="com.main"
-OUTPUT_DIR="/build-space/$ARTIFACT_ID"
 U_ID=$(id -u)
 G_ID=$(id -g)
 
