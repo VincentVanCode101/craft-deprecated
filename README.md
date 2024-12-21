@@ -13,17 +13,17 @@ The `Craft` CLI is a tool designed to simplify the process of bootstrapping new 
 - 💡 **Efficient and Reliable**: Helps you start and maintain projects effortlessly.  
 - 🏗️ **almost no dependecies**: Requires only Docker to build and run your projects. There's no need to install any other language runtimes, compilers, or frameworks locally.
 
-See why `Craft` solves the [problems of other scaffolding tools](#problems-with-other-scaffolding-tools) where I explain how it addresses common pitfalls and inefficiencies.
+See why `Craft` solves the [problems of other scaffolding tools](#️-problems-with-other-scaffolding-tools) where I explain how it addresses common pitfalls and inefficiencies.
 
 ## **Table of Contents**
 
-- [Problems with Other Scaffolding Tools](#problems-with-other-scaffolding-tools)
-- [Why Use Craft](#why-use-craft)
-- [Features](#features)
-- [Installation](#installation)
-- [Command Line Usage](#command-line-usage)
+- [Problems with Other Scaffolding Tools](#️-problems-with-other-scaffolding-tools)
+- [Why Use Craft](#️-why-use-craft)
+- [Features](#-features)
+- [Installation](#-installation)
+- [Command Line Usage](#-command-line-usage)
   - [Creating New Projects](#1-creating-new-projects)
-  - [Inspecting Supported Operations](#3-inspecting-supported-operations)
+  - [Inspecting Supported Operations](#2-inspecting-supported-operations)
 - [Supported Languages](#supported-languages)
 - [License](#license)
 
@@ -50,7 +50,7 @@ These problems slow down productivity, create barriers for quickly experimenting
 - **Minimal Setup**: Generates only the essential files needed to start coding, with the option to create more complex setups if you’re familiar with the language. This allows you to build and structure your project the way you want.
 - **Beginner-Friendly**: Focuses on simplicity and clarity, giving you exactly what you need to get started with a new language or task.
 
-## ✨ Features
+## ✨Features
 
 - **Project Scaffolding** (`new` command):
   - Quickly generate project files and structure for supported languages and frameworks.
