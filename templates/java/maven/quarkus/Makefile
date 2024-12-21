@@ -4,7 +4,7 @@
 .DEFAULT_GOAL := help
 
 # Variables
-MVNW = mvnw
+MVNW = mvn
 
 # Help target
 help:

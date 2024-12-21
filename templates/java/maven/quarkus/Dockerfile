@@ -6,4 +6,9 @@ COPY ./pom.xml ./
 
 RUN mvn dependency:go-offline
 
+RUN apt-get update && apt-get install -y make
+
 COPY src/ ./src/
+COPY Makefile Makefile
+
+RUN make test
