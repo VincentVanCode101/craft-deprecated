@@ -1,28 +1,34 @@
 package javahandler
 
 import (
+	"craft/internal/common"
 	"craft/internal/utils"
 	"fmt"
 	"io/fs"
 	"os"
 	"os/exec"
+	"path"
 	"path/filepath"
 	"strings"
 )
 
 type NewJavaHandler struct {
-	Dependencies []string
-	Language     string
-	BuildTool    string
-	Framework    string
-	TemplatesFS  fs.FS
+	Dependencies        []string
+	Language            string
+	BuildTool           string
+	Framework           string
+	TemplatesFileSystem fs.FS
 }
 
 func (h *NewJavaHandler) SetTemplatesFS(fs fs.FS) {
-	h.TemplatesFS = fs
+	h.TemplatesFileSystem = fs
 }
 
-const projectNamePlaceHolder = "PROJECT_NAME"
+const (
+	projectNamePlaceholder = "{PROJECT_NAME}"
+	dotFileNotationPrefix  = "DOT"
+	dotFilePrefix          = "."
+)
 
 // Supported combinations of dependencies
 var allowedCombinations = map[string][]string{
@@ -153,7 +159,7 @@ func (h *NewJavaHandler) handleMavenProject(projectHostDir, projectName string) 
 		// Default case: No specific framework
 		return h.setupDefaultMavenProject(projectHostDir, projectName)
 	case "quarkus":
-		return fmt.Errorf("setting up a Quarkus project with Maven is not yet implemented")
+		return h.setupQuarkusMavenProject(projectHostDir, projectName)
 	case "springboot":
 		return fmt.Errorf("setting up a Spring Boot project with Maven is not yet implemented")
 	default:
@@ -173,9 +179,59 @@ func (h *NewJavaHandler) handleGradleProject() error {
 	}
 }
 
+func (h *NewJavaHandler) setupQuarkusMavenProject(projectHostDir, projectName string) error {
+	filesThatNeedProjectNameAdjustedOnce := []string{} // Add a Makefile?
+	filesThatNeedProjectNameAdjustedEverywhere := []string{"README.md", "docker-compose.dev.yml"}
+	filesThatNeedToBeRemoved := []string{"build.Dockerfile", "create_java_project.sh"}
+	filesThatNeedToBeRemovedInTheJavaFolder := []string{".dockerignore"} // .dockerignore is added since quarkus creates there own .dockerignore, which has to be removed before ours is copied over
+
+	javaProjectPath := filepath.Join(projectHostDir, projectName)
+
+	languageTemplatePath := filepath.Join("templates", h.Language, h.BuildTool, "quarkus")
+	if err := h.copyTemplateFilesToHost(languageTemplatePath, projectHostDir); err != nil {
+		return err
+	}
+	scriptPath := filepath.Join(projectHostDir, "create_java_project.sh")
+	if err := h.executeProjectSetupScript(scriptPath, projectName, projectHostDir); err != nil {
+		return err
+	}
+
+	if err := h.cleanupFiles(projectHostDir, filesThatNeedToBeRemoved); err != nil {
+		return err
+	}
+
+	if err := h.cleanupFiles(javaProjectPath, filesThatNeedToBeRemovedInTheJavaFolder); err != nil {
+		return err
+	}
+
+	dotFileCandidates, err := utils.ListFilesWithPattern(h.TemplatesFileSystem, languageTemplatePath, dotFileNotationPrefix)
+	if err != nil {
+		return err
+	}
+	for _, filePath := range dotFileCandidates {
+		hostFilePath := path.Join(projectHostDir, filePath)
+		renamedFilePath := strings.ReplaceAll(hostFilePath, dotFileNotationPrefix, dotFilePrefix)
+
+		err := os.Rename(hostFilePath, renamedFilePath)
+
+		if err != nil {
+			fmt.Printf("Error renaming file %v to remove %v: %v\n", hostFilePath, dotFileNotationPrefix, err)
+			return err
+		}
+	}
+
+	if err := utils.CopyAllOnePathUpAndRemoveDir(javaProjectPath); err != nil {
+		return err
+	}
+	if err := h.adjustProjectNames(projectHostDir, filesThatNeedProjectNameAdjustedOnce, filesThatNeedProjectNameAdjustedEverywhere, projectName); err != nil {
+		return err
+	}
+	return nil
+}
+
 func (h *NewJavaHandler) setupDefaultMavenProject(projectHostDir, projectName string) error {
-	filesThatNeedProjectNameAdjustedOnce := []string{"docker-compose.dev.yml", "Makefile", "README.md"}
-	filesThatNeedProjectNameAdjustedEverywhere := []string{"README.md"}
+	filesThatNeedProjectNameAdjustedOnce := []string{"Makefile"}
+	filesThatNeedProjectNameAdjustedEverywhere := []string{"README.md", "docker-compose.dev.yml"}
 	filesThatNeedToBeRemoved := []string{"build.Dockerfile", "create_java_project.sh"}
 
 	languageTemplatePath := filepath.Join("templates", h.Language, h.BuildTool, "default")
@@ -205,7 +261,7 @@ func (h *NewJavaHandler) setupDefaultMavenProject(projectHostDir, projectName st
 }
 
 func (handler *NewJavaHandler) copyTemplateFilesToHost(languageTemplatePath, projectHostDir string) error {
-	if err := utils.CopyDirFromFS(handler.TemplatesFS, languageTemplatePath, projectHostDir); err != nil {
+	if err := utils.CopyDirFromFS(handler.TemplatesFileSystem, languageTemplatePath, projectHostDir); err != nil {
 		return fmt.Errorf("error copying files from template path: %v", err)
 	}
 	return nil
@@ -228,6 +284,7 @@ func (handler *NewJavaHandler) executeProjectSetupScript(scriptPath, projectName
 }
 
 func (handler *NewJavaHandler) cleanupFiles(projectHostDir string, files []string) error {
+	fmt.Printf("the files %v", files)
 	for _, file := range files {
 		filePath := filepath.Join(projectHostDir, file)
 		if err := utils.RemoveFileFromHost(filePath); err != nil {
@@ -238,16 +295,5 @@ func (handler *NewJavaHandler) cleanupFiles(projectHostDir string, files []strin
 }
 
 func (handler *NewJavaHandler) adjustProjectNames(projectHostDir string, onceFiles, everywhereFiles []string, projectName string) error {
-	for _, filePath := range onceFiles {
-		if err := utils.ChangeWordInFile(filepath.Join(projectHostDir, filePath), projectNamePlaceHolder, projectName, false); err != nil {
-			return fmt.Errorf("error adjusting project name in file '%s': %v", filePath, err)
-		}
-	}
-
-	for _, filePath := range everywhereFiles {
-		if err := utils.ChangeWordInFile(filepath.Join(projectHostDir, filePath), projectNamePlaceHolder, projectName, true); err != nil {
-			return fmt.Errorf("error adjusting project name in file '%s': %v", filePath, err)
-		}
-	}
-	return nil
+	return common.AdjustProjectNames(projectHostDir, onceFiles, everywhereFiles, projectNamePlaceholder, projectName)
 }

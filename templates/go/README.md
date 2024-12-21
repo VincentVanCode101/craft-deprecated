@@ -1,4 +1,4 @@
-# PROJECT_NAME
+# {PROJECT_NAME}
 ### **How to Start the Project Using Docker**
 
 This project is configured to run inside a Docker container for consistent development environments. Follow the steps below to set up, start, and use the project.
@@ -24,14 +24,14 @@ Use the provided `docker-compose.dev.yml` file to build and start the developmen
   ```bash
   docker ps
   ```
-  Look for a container named `PROJECT_NAME-go-compiler`.
+  Look for a container named `{PROJECT_NAME}-go-compiler`.
 
 #### **2. Connect to the Development Container**
 Once the container is running, connect to it for development purposes.
 
 - **Open a bash session in the container:**
   ```bash
-  docker exec -it PROJECT_NAME-go-compiler bash
+  docker exec -it {PROJECT_NAME}-go-compiler bash
   ```
 
 ### **How to Use the Makefile (Container Usage)**
@@ -51,7 +51,7 @@ You need to connect to the [development container](#2-connect-to-the-development
   make
   ```
 - **Effect**:
-  - Compiles the main Go application specified by `MAIN_PACKAGE` (`./main.go`) into a binary named `PROJECT_NAME`.
+  - Compiles the main Go application specified by `MAIN_PACKAGE` (`./main.go`) into a binary named `{PROJECT_NAME}`.
 
 ---
 
@@ -123,7 +123,7 @@ You need to connect to the [development container](#2-connect-to-the-development
   ```
   Output:
   ```
-  Running the main project (PROJECT_NAME)...
+  Running the main project ({PROJECT_NAME})...
   ```
 
 ---

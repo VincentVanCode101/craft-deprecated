@@ -8,28 +8,30 @@ import (
 	"path/filepath"
 	"strings"
 
+	"craft/internal/common"
 	"craft/internal/utils"
 )
 
 type NewGoHandler struct {
-	Dependencies       []string
-	Language           string
-	TemplateFileSystem fs.FS
+	Dependencies        []string
+	Language            string
+	TemplatesFileSystem fs.FS
 }
 
 func (h *NewGoHandler) SetTemplatesFS(fileSystem fs.FS) {
-	h.TemplateFileSystem = fileSystem
+	h.TemplatesFileSystem = fileSystem
 }
 
 const (
 	templateFileSuffix     = ".template"
 	dotFileNotationPrefix  = "DOT"
 	dotFilePrefix          = "."
-	projectNamePlaceholder = "PROJECT_NAME"
+	projectNamePlaceholder = "{PROJECT_NAME}"
 )
 
 var (
-	projectNamePlaceholderFiles = []string{"go.mod.template", "docker-compose.dev.yml", "Makefile"}
+	filesThatNeedProjectNameAdjustedOnce       = []string{"go.mod.template", "Makefile"}
+	filesThatNeedProjectNameAdjustedEverywhere = []string{"README.md", "docker-compose.dev.yml"}
 )
 
 func (h *NewGoHandler) Run(projectName string) error {
@@ -45,22 +47,20 @@ func (h *NewGoHandler) Run(projectName string) error {
 
 	languageTemplatePath := filepath.Join("templates", h.Language)
 
-	err = utils.CopyDirFromFS(h.TemplateFileSystem, languageTemplatePath, projectHostDir)
+	err = utils.CopyDirFromFS(h.TemplatesFileSystem, languageTemplatePath, projectHostDir)
 	if err != nil {
 		fmt.Printf("Error copying files from the embedded folder: %v to host: %v -> error: %v\n", languageTemplatePath, projectHostDir, err)
 		return err
 	}
-
-	for _, filePath := range projectNamePlaceholderFiles {
-		hostFilePath := path.Join(projectHostDir, filePath)
-		err := utils.ChangeWordInFile(hostFilePath, projectNamePlaceholder, projectName, false)
-		if err != nil {
-			fmt.Printf("Error changing the project name in %s: %v\n", hostFilePath, err)
-			return err
-		}
+	if err := h.adjustProjectNames(projectHostDir, filesThatNeedProjectNameAdjustedOnce, filesThatNeedProjectNameAdjustedEverywhere, projectName); err != nil {
+		return err
 	}
 
-	dotFileCandidates, err := utils.ListFilesWithPattern(h.TemplateFileSystem, languageTemplatePath, dotFileNotationPrefix)
+	if err := h.adjustProjectNames(projectHostDir, filesThatNeedProjectNameAdjustedOnce, filesThatNeedProjectNameAdjustedEverywhere, projectName); err != nil {
+		return err
+	}
+
+	dotFileCandidates, err := utils.ListFilesWithPattern(h.TemplatesFileSystem, languageTemplatePath, dotFileNotationPrefix)
 	if err != nil {
 		return err
 	}
@@ -77,7 +77,7 @@ func (h *NewGoHandler) Run(projectName string) error {
 		}
 	}
 
-	templateFiles, err := utils.ListFilesWithPattern(h.TemplateFileSystem, languageTemplatePath, templateFileSuffix)
+	templateFiles, err := utils.ListFilesWithPattern(h.TemplatesFileSystem, languageTemplatePath, templateFileSuffix)
 	if err != nil {
 		return err
 	}
@@ -93,4 +93,8 @@ func (h *NewGoHandler) Run(projectName string) error {
 	}
 
 	return nil
+}
+
+func (handler *NewGoHandler) adjustProjectNames(projectHostDir string, onceFiles, everywhereFiles []string, projectName string) error {
+	return common.AdjustProjectNames(projectHostDir, onceFiles, everywhereFiles, projectNamePlaceholder, projectName)
 }

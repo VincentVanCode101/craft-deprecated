@@ -1,4 +1,4 @@
-# PROJECT_NAME
+# {PROJECT_NAME}
 ### **How to Start the Project Using Docker**
 
 This project is configured to run inside a Docker container for consistent development environments. Follow the steps below to set up, start, and use the project.
@@ -24,14 +24,14 @@ Use the provided `docker-compose.dev.yml` file to build and start the developmen
   ```bash
   docker ps
   ```
-  Look for a container named `PROJECT_NAME-java-env`.
+  Look for a container named `{PROJECT_NAME}-java-env`.
 
 #### **2. Connect to the Development Container**
 Once the container is running, connect to it for development purposes.
 
 - **Open a bash session in the container:**
   ```bash
-  docker exec -it PROJECT_NAME-java-env bash
+  docker exec -it {PROJECT_NAME}-java-env bash
   ```
   - use the `make` command from here on (see the chapter below)
 
@@ -100,7 +100,7 @@ You need to connect to the [development container](#2-connect-to-the-development
   ```
 - **Effect**:
   - Compiles all `.java` files (if not already compiled).
-  - Generates an uber JAR named `PROJECT_NAME.jar` in the `$(JAR_DIR)` directory.
+  - Generates an uber JAR named `{PROJECT_NAME}.jar` in the `$(JAR_DIR)` directory.
   - The JAR includes:
     - All compiled classes.
     - A manifest file with the `Main-Class` specified as `MAIN_CLASS`.
@@ -112,8 +112,8 @@ You need to connect to the [development container](#2-connect-to-the-development
   Output:
   ```
   Compiling all files in src/main/java...
-  Creating uber JAR for PROJECT_NAME...
-  Uber JAR created: jar/PROJECT_NAME.jar
+  Creating uber JAR for {PROJECT_NAME}...
+  Uber JAR created: jar/{PROJECT_NAME}.jar
   ```
 
 ---
@@ -125,7 +125,7 @@ You need to connect to the [development container](#2-connect-to-the-development
   make run-jar
   ```
 - **Effect**:
-  - Executes the `PROJECT_NAME.jar` file in the `$(JAR_DIR)` directory.
+  - Executes the `{PROJECT_NAME}.jar` file in the `$(JAR_DIR)` directory.
   - Automatically builds the uber JAR if it doesn’t already exist.
 
 - **Example**:
@@ -134,7 +134,7 @@ You need to connect to the [development container](#2-connect-to-the-development
   ```
   Output:
   ```
-  Running uber JAR for PROJECT_NAME without arguments...
+  Running uber JAR for {PROJECT_NAME} without arguments...
   Hello World!
   ```
 
@@ -149,11 +149,11 @@ You need to connect to the [development container](#2-connect-to-the-development
     ```
   Output:
   ```
-  Running uber JAR for PROJECT_NAME with arguments: foo bar...
+  Running uber JAR for {PROJECT_NAME} with arguments: foo bar...
   Hello World!
   ```
 > [!NOTE]
-> The arguments of "foo" and "bar" do not appear in the programm output since the App.java does not evaluate them... but if you had logic depending on the args, this run command would pass them correctly to the PROJECT_NAME.jar
+> The arguments of "foo" and "bar" do not appear in the programm output since the App.java does not evaluate them... but if you had logic depending on the args, this run command would pass them correctly to the {PROJECT_NAME}.jar
 
 ---
 

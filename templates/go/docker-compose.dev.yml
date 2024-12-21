@@ -1,4 +1,4 @@
-name: PROJECT_NAME
+name: {PROJECT_NAME}
 
 services:
   go-compiler:
