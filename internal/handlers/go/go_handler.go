@@ -6,6 +6,7 @@ import (
 	"path/filepath"
 
 	"craft/internal/common"
+	"craft/internal/constants"
 	"craft/internal/utils"
 )
 
@@ -18,13 +19,6 @@ type NewGoHandler struct {
 func (h *NewGoHandler) SetTemplatesFS(fileSystem fs.FS) {
 	h.TemplatesFileSystem = fileSystem
 }
-
-const (
-	templateFileSuffix     = ".template"
-	dotFileNotationPrefix  = "DOT"
-	dotFilePrefix          = "."
-	projectNamePlaceholder = "{PROJECT_NAME}"
-)
 
 var (
 	filesThatNeedProjectNameAdjustedOnce       = []string{"go.mod.template", "Makefile"}
@@ -52,22 +46,22 @@ func (h *NewGoHandler) Run(projectName string) error {
 		return err
 	}
 
-	dotFileCandidates, err := utils.ListFilesWithPattern(h.TemplatesFileSystem, languageTemplatePath, dotFileNotationPrefix)
+	dotFileCandidates, err := utils.ListFilesWithPattern(h.TemplatesFileSystem, languageTemplatePath, constants.DotFileNotationPrefix)
 	if err != nil {
 		return err
 	}
 
-	if err := utils.RenameFilesWithPrefix(dotFileCandidates, projectHostDir, dotFileNotationPrefix, dotFilePrefix); err != nil {
+	if err := utils.RenameFilesWithPrefix(dotFileCandidates, projectHostDir, constants.DotFileNotationPrefix, constants.DotFilePrefix); err != nil {
 		fmt.Printf("Error renaming dot files: %v\n", err)
 		return err
 	}
 
-	templateFiles, err := utils.ListFilesWithPattern(h.TemplatesFileSystem, languageTemplatePath, templateFileSuffix)
+	templateFiles, err := utils.ListFilesWithPattern(h.TemplatesFileSystem, languageTemplatePath, constants.TemplateFileSuffix)
 	if err != nil {
 		return err
 	}
 
-	if err := utils.TrimFileSuffix(templateFiles, projectHostDir, templateFileSuffix); err != nil {
+	if err := utils.TrimFileSuffix(templateFiles, projectHostDir, constants.TemplateFileSuffix); err != nil {
 		fmt.Printf("Error cleaning template file suffixes: %v\n", err)
 		return err
 	}
@@ -83,5 +77,5 @@ func (h *NewGoHandler) copyTemplateFilesToHost(languageTemplatePath, projectHost
 }
 
 func (handler *NewGoHandler) adjustProjectNames(projectHostDir string, onceFiles, everywhereFiles []string, projectName string) error {
-	return common.AdjustProjectNames(projectHostDir, onceFiles, everywhereFiles, projectNamePlaceholder, projectName)
+	return common.AdjustProjectNames(projectHostDir, onceFiles, everywhereFiles, constants.ProjectNamePlaceholder, projectName)
 }

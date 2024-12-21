@@ -31,3 +31,7 @@ endif
 clean:
 	@echo "Cleaning up Go build artifacts..."
 	go clean
+
+watch:
+	@echo "Starting the watch script..."
+	@bash ./watchAndBuildBinary.sh

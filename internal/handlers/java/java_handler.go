@@ -1,7 +1,8 @@
-package javahandler
+package handlers
 
 import (
 	"craft/internal/common"
+	"craft/internal/constants"
 	"craft/internal/utils"
 	"fmt"
 	"io/fs"
@@ -22,12 +23,6 @@ type NewJavaHandler struct {
 func (h *NewJavaHandler) SetTemplatesFS(fs fs.FS) {
 	h.TemplatesFileSystem = fs
 }
-
-const (
-	projectNamePlaceholder = "{PROJECT_NAME}"
-	dotFileNotationPrefix  = "DOT"
-	dotFilePrefix          = "."
-)
 
 // Supported combinations of dependencies
 var allowedCombinations = map[string][]string{
@@ -199,12 +194,12 @@ func (h *NewJavaHandler) setupQuarkusMavenProject(projectHostDir, projectName st
 		return err
 	}
 
-	dotFileCandidates, err := utils.ListFilesWithPattern(h.TemplatesFileSystem, languageTemplatePath, dotFileNotationPrefix)
+	dotFileCandidates, err := utils.ListFilesWithPattern(h.TemplatesFileSystem, languageTemplatePath, constants.DotFileNotationPrefix)
 	if err != nil {
 		return err
 	}
 
-	if err := utils.RenameFilesWithPrefix(dotFileCandidates, projectHostDir, dotFileNotationPrefix, dotFilePrefix); err != nil {
+	if err := utils.RenameFilesWithPrefix(dotFileCandidates, projectHostDir, constants.DotFileNotationPrefix, constants.DotFilePrefix); err != nil {
 		fmt.Printf("Error renaming dot files: %v\n", err)
 		return err
 	}
@@ -258,12 +253,12 @@ func (h *NewJavaHandler) setupDefaultMavenProject(projectHostDir, projectName st
 		return err
 	}
 
-	dotFileCandidates, err := utils.ListFilesWithPattern(h.TemplatesFileSystem, languageTemplatePath, dotFileNotationPrefix)
+	dotFileCandidates, err := utils.ListFilesWithPattern(h.TemplatesFileSystem, languageTemplatePath, constants.DotFileNotationPrefix)
 	if err != nil {
 		return err
 	}
 
-	if err := utils.RenameFilesWithPrefix(dotFileCandidates, projectHostDir, dotFileNotationPrefix, dotFilePrefix); err != nil {
+	if err := utils.RenameFilesWithPrefix(dotFileCandidates, projectHostDir, constants.DotFileNotationPrefix, constants.DotFilePrefix); err != nil {
 		fmt.Printf("Error renaming dot files: %v\n", err)
 		return err
 	}
@@ -303,5 +298,5 @@ func (h *NewJavaHandler) cleanupFiles(projectHostDir string, files []string) err
 }
 
 func (h *NewJavaHandler) adjustProjectNames(projectHostDir string, onceFiles, everywhereFiles []string, projectName string) error {
-	return common.AdjustProjectNames(projectHostDir, onceFiles, everywhereFiles, projectNamePlaceholder, projectName)
+	return common.AdjustProjectNames(projectHostDir, onceFiles, everywhereFiles, constants.ProjectNamePlaceholder, projectName)
 }

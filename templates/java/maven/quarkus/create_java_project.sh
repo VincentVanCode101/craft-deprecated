@@ -3,11 +3,11 @@
 set -e
 
 if [ -z "$1" ]; then
-  echo "Usage: $0 <ARTIFACT_ID>"
+  echo "Usage: $0 <PROJECT_NAME>"
   exit 1
 fi
 
-ARTIFACT_ID=$1
+PROJECT_NAME=$1
 U_ID=$(id -u)
 GID=$(id -g)
 
@@ -18,7 +18,7 @@ docker build \
   -f $DOCKERFILE \
   --build-arg UID=$U_ID \
   --build-arg GID=$GID \
-  --build-arg ARTIFACT_ID=$ARTIFACT_ID \
+  --build-arg ARTIFACT_ID=$PROJECT_NAME \
   -t $DOCKER_IMAGE_NAME .
 
 docker run --rm \

@@ -1,0 +1,16 @@
+name: {PROJECT_NAME}
+
+services:
+  rust-env:
+    container_name: ${COMPOSE_PROJECT_NAME}-rust-env
+    build:
+      context: .
+      target: dev
+    image: ${COMPOSE_PROJECT_NAME}-rust-env:latest
+    volumes:
+      - .:/workspace
+      - {PROJECT_NAME}_cargo_cache:/root/.cargo
+    entrypoint: ["tail", "-f", "/dev/null"]
+
+volumes:
+  {PROJECT_NAME}_cargo_cache:

@@ -55,7 +55,7 @@ func NewNewCmd(templatesFS embed.FS) *cobra.Command {
 			}
 			language := args[0]
 
-			err := constants.ValidateOperationAndLanguage("new", language)
+			err := registry.ValidateOperationAndLanguage("new", language)
 			if err != nil {
 				return err
 			}
@@ -101,7 +101,7 @@ func getProjectDetails(specifiedProjectName, language string) string {
 		return specifiedProjectName
 	}
 
-	return fmt.Sprintf("%v-%v", constants.Tool_name, language)
+	return fmt.Sprintf("%v-%v", constants.ToolName, language)
 }
 
 func fetchSupportedDependenciesInfo(language string, titleCaser cases.Caser) string {
