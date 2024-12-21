@@ -28,3 +28,13 @@ func AdjustProjectNames(projectHostDir string, onceFiles, everywhereFiles []stri
 	}
 	return nil
 }
+
+func CleanupFiles(projectHostDir string, files []string) error {
+	for _, file := range files {
+		filePath := filepath.Join(projectHostDir, file)
+		if err := utils.RemoveFileFromHost(filePath); err != nil {
+			return fmt.Errorf("error removing file '%s': %v", filePath, err)
+		}
+	}
+	return nil
+}

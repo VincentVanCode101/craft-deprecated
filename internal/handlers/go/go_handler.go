@@ -3,10 +3,7 @@ package gohandler
 import (
 	"fmt"
 	"io/fs"
-	"os"
-	"path"
 	"path/filepath"
-	"strings"
 
 	"craft/internal/common"
 	"craft/internal/utils"
@@ -47,12 +44,7 @@ func (h *NewGoHandler) Run(projectName string) error {
 
 	languageTemplatePath := filepath.Join("templates", h.Language)
 
-	err = utils.CopyDirFromFS(h.TemplatesFileSystem, languageTemplatePath, projectHostDir)
-	if err != nil {
-		fmt.Printf("Error copying files from the embedded folder: %v to host: %v -> error: %v\n", languageTemplatePath, projectHostDir, err)
-		return err
-	}
-	if err := h.adjustProjectNames(projectHostDir, filesThatNeedProjectNameAdjustedOnce, filesThatNeedProjectNameAdjustedEverywhere, projectName); err != nil {
+	if err := h.copyTemplateFilesToHost(languageTemplatePath, projectHostDir); err != nil {
 		return err
 	}
 
@@ -65,33 +57,28 @@ func (h *NewGoHandler) Run(projectName string) error {
 		return err
 	}
 
-	for _, filePath := range dotFileCandidates {
-		hostFilePath := path.Join(projectHostDir, filePath)
-		renamedFilePath := strings.ReplaceAll(hostFilePath, dotFileNotationPrefix, dotFilePrefix)
-
-		err := os.Rename(hostFilePath, renamedFilePath)
-
-		if err != nil {
-			fmt.Printf("Error renaming file %v to remove %v: %v\n", hostFilePath, dotFileNotationPrefix, err)
-			return err
-		}
+	if err := utils.RenameFilesWithPrefix(dotFileCandidates, projectHostDir, dotFileNotationPrefix, dotFilePrefix); err != nil {
+		fmt.Printf("Error renaming dot files: %v\n", err)
+		return err
 	}
 
 	templateFiles, err := utils.ListFilesWithPattern(h.TemplatesFileSystem, languageTemplatePath, templateFileSuffix)
 	if err != nil {
 		return err
 	}
-	for _, filePath := range templateFiles {
-		hostFilePath := path.Join(projectHostDir, filePath)
-		cleanedFilePath := strings.TrimSuffix(hostFilePath, templateFileSuffix)
 
-		err := os.Rename(hostFilePath, cleanedFilePath)
-		if err != nil {
-			fmt.Printf("Error removing suffix %v in %v: %v\n", templateFileSuffix, hostFilePath, err)
-			return err
-		}
+	if err := utils.TrimFileSuffix(templateFiles, projectHostDir, templateFileSuffix); err != nil {
+		fmt.Printf("Error cleaning template file suffixes: %v\n", err)
+		return err
 	}
 
+	return nil
+}
+
+func (h *NewGoHandler) copyTemplateFilesToHost(languageTemplatePath, projectHostDir string) error {
+	if err := utils.CopyDirFromFS(h.TemplatesFileSystem, languageTemplatePath, projectHostDir); err != nil {
+		return fmt.Errorf("error copying files from template path: %v", err)
+	}
 	return nil
 }
 

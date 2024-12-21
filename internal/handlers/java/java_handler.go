@@ -7,7 +7,6 @@ import (
 	"io/fs"
 	"os"
 	"os/exec"
-	"path"
 	"path/filepath"
 	"strings"
 )
@@ -181,9 +180,9 @@ func (h *NewJavaHandler) handleGradleProject() error {
 
 func (h *NewJavaHandler) setupQuarkusMavenProject(projectHostDir, projectName string) error {
 	filesThatNeedProjectNameAdjustedOnce := []string{} // Add a Makefile?
-	filesThatNeedProjectNameAdjustedEverywhere := []string{"README.md", "docker-compose.dev.yml"}
-	filesThatNeedToBeRemoved := []string{"build.Dockerfile", "create_java_project.sh"}
-	filesThatNeedToBeRemovedInTheJavaFolder := []string{".dockerignore"} // .dockerignore is added since quarkus creates there own .dockerignore, which has to be removed before ours is copied over
+	filesThatNeedProjectNameAdjustedEverywhere := []string{"partialREADME.md", "docker-compose.dev.yml"}
+	filesThatNeedToBeRemoved := []string{"build.Dockerfile", "create_java_project.sh", "partialREADME.md"}
+	filesThatNeedToBeRemovedInTheJavaFolder := []string{".dockerignore"} // .dockerignore is added since quarkus creates there own .dockerignore, which has to be removed before ours is copied over (we want our in the final project)
 
 	javaProjectPath := filepath.Join(projectHostDir, projectName)
 
@@ -196,10 +195,6 @@ func (h *NewJavaHandler) setupQuarkusMavenProject(projectHostDir, projectName st
 		return err
 	}
 
-	if err := h.cleanupFiles(projectHostDir, filesThatNeedToBeRemoved); err != nil {
-		return err
-	}
-
 	if err := h.cleanupFiles(javaProjectPath, filesThatNeedToBeRemovedInTheJavaFolder); err != nil {
 		return err
 	}
@@ -208,24 +203,34 @@ func (h *NewJavaHandler) setupQuarkusMavenProject(projectHostDir, projectName st
 	if err != nil {
 		return err
 	}
-	for _, filePath := range dotFileCandidates {
-		hostFilePath := path.Join(projectHostDir, filePath)
-		renamedFilePath := strings.ReplaceAll(hostFilePath, dotFileNotationPrefix, dotFilePrefix)
 
-		err := os.Rename(hostFilePath, renamedFilePath)
-
-		if err != nil {
-			fmt.Printf("Error renaming file %v to remove %v: %v\n", hostFilePath, dotFileNotationPrefix, err)
-			return err
-		}
+	if err := utils.RenameFilesWithPrefix(dotFileCandidates, projectHostDir, dotFileNotationPrefix, dotFilePrefix); err != nil {
+		fmt.Printf("Error renaming dot files: %v\n", err)
+		return err
 	}
 
 	if err := utils.CopyAllOnePathUpAndRemoveDir(javaProjectPath); err != nil {
 		return err
 	}
+
 	if err := h.adjustProjectNames(projectHostDir, filesThatNeedProjectNameAdjustedOnce, filesThatNeedProjectNameAdjustedEverywhere, projectName); err != nil {
 		return err
 	}
+
+	ourReadmePath := filepath.Join(projectHostDir, "partialREADME.md")
+	data, err := os.ReadFile(ourReadmePath)
+	if err != nil {
+		return nil
+	}
+
+	theirReadmePath := filepath.Join(projectHostDir, "README.md")
+
+	err = utils.ChangeWordInFile(theirReadmePath, projectName, string(data), false)
+
+	if err := h.cleanupFiles(projectHostDir, filesThatNeedToBeRemoved); err != nil {
+		return err
+	}
+
 	return nil
 }
 
@@ -253,6 +258,16 @@ func (h *NewJavaHandler) setupDefaultMavenProject(projectHostDir, projectName st
 		return err
 	}
 
+	dotFileCandidates, err := utils.ListFilesWithPattern(h.TemplatesFileSystem, languageTemplatePath, dotFileNotationPrefix)
+	if err != nil {
+		return err
+	}
+
+	if err := utils.RenameFilesWithPrefix(dotFileCandidates, projectHostDir, dotFileNotationPrefix, dotFilePrefix); err != nil {
+		fmt.Printf("Error renaming dot files: %v\n", err)
+		return err
+	}
+
 	if err := h.adjustProjectNames(projectHostDir, filesThatNeedProjectNameAdjustedOnce, filesThatNeedProjectNameAdjustedEverywhere, projectName); err != nil {
 		return err
 	}
@@ -260,14 +275,14 @@ func (h *NewJavaHandler) setupDefaultMavenProject(projectHostDir, projectName st
 	return fmt.Errorf("setting up a plain Java project for Maven is not implemented fully... a docker image named 'maven-project-generator:latest' is on your host and isn't cleaned up (can be done by running: 'docker image rm maven-project-generator:latest')")
 }
 
-func (handler *NewJavaHandler) copyTemplateFilesToHost(languageTemplatePath, projectHostDir string) error {
-	if err := utils.CopyDirFromFS(handler.TemplatesFileSystem, languageTemplatePath, projectHostDir); err != nil {
+func (h *NewJavaHandler) copyTemplateFilesToHost(languageTemplatePath, projectHostDir string) error {
+	if err := utils.CopyDirFromFS(h.TemplatesFileSystem, languageTemplatePath, projectHostDir); err != nil {
 		return fmt.Errorf("error copying files from template path: %v", err)
 	}
 	return nil
 }
 
-func (handler *NewJavaHandler) executeProjectSetupScript(scriptPath, projectName, projectHostDir string) error {
+func (h *NewJavaHandler) executeProjectSetupScript(scriptPath, projectName, projectHostDir string) error {
 	if err := os.Chmod(scriptPath, 0771); err != nil {
 		return fmt.Errorf("error setting execute permissions on script: %v", err)
 	}
@@ -283,17 +298,10 @@ func (handler *NewJavaHandler) executeProjectSetupScript(scriptPath, projectName
 	return nil
 }
 
-func (handler *NewJavaHandler) cleanupFiles(projectHostDir string, files []string) error {
-	fmt.Printf("the files %v", files)
-	for _, file := range files {
-		filePath := filepath.Join(projectHostDir, file)
-		if err := utils.RemoveFileFromHost(filePath); err != nil {
-			return fmt.Errorf("error removing file '%s': %v", filePath, err)
-		}
-	}
-	return nil
+func (h *NewJavaHandler) cleanupFiles(projectHostDir string, files []string) error {
+	return common.CleanupFiles(projectHostDir, files)
 }
 
-func (handler *NewJavaHandler) adjustProjectNames(projectHostDir string, onceFiles, everywhereFiles []string, projectName string) error {
+func (h *NewJavaHandler) adjustProjectNames(projectHostDir string, onceFiles, everywhereFiles []string, projectName string) error {
 	return common.AdjustProjectNames(projectHostDir, onceFiles, everywhereFiles, projectNamePlaceholder, projectName)
 }
