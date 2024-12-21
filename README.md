@@ -13,7 +13,7 @@ The `Craft` CLI is a tool designed to simplify the process of bootstrapping new 
 - 💡 **Efficient and Reliable**: Helps you start and maintain projects effortlessly.  
 - 🏗️ **almost no dependecies**: Requires only Docker to build and run your projects. There's no need to install any other language runtimes, compilers, or frameworks locally.
 
-See why `Craft` solves the [problems of other scaffolding tools](#️-problems-with-other-scaffolding-tools) where I explain how it addresses common pitfalls and inefficiencies.
+See how `Craft` solves the [problems of other scaffolding tools](#️-problems-with-other-scaffolding-tools) where I explain how it addresses common pitfalls and inefficiencies.
 
 ## **Table of Contents**
 
@@ -184,10 +184,16 @@ Allowed Operations and Languages:
     **Example**:
    Create a new Java project using Maven:
     ```bash
-    craft new java -c
+    craft new java
     ```
     - `springboot`: Coming soon...
-    - `quarkus`: Coming soon...
+    - `quarkus`: Create a Java projects with the Quarkus framework. ([Documentation](./docs/java-quarkus.md))
+
+    **Example**:
+   Create a new Quarkus-Java project using Maven:
+    ```bash
+    craft new java --dependencies quarkus
+    ```
 
 
 </details>

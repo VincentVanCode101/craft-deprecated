@@ -1,0 +1,25 @@
+name: {PROJECT_NAME}
+
+services:
+  quarkus-env:
+    container_name: ${COMPOSE_PROJECT_NAME}-quarkus-env
+    build:
+      context: .
+      target: dev
+    image: ${COMPOSE_PROJECT_NAME}-quarkus-env:latest
+    volumes:
+      - .:/workspace
+      - {PROJECT_NAME}_maven_cache:/root/.m2
+    env_file:
+      - .env
+    environment:
+      - QUARKUS_LAUNCH_DEVMODE=true
+      - JAVA_ENABLE_DEBUG=true
+
+    ports:
+      - ${DOCKER_PORT:-8080}:8080
+
+    entrypoint: ["mvn", "quarkus:dev", "-DdebugHost=0.0.0.0", "-Dquarkus.analytics.disabled=true"]
+
+volumes:
+  {PROJECT_NAME}_maven_cache:

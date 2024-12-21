@@ -1,4 +1,4 @@
-name: PROJECT_NAME
+name: {PROJECT_NAME}
 
 services:
   java-env:
@@ -9,4 +9,8 @@ services:
     image: ${COMPOSE_PROJECT_NAME}-java-env:latest
     volumes:
       - .:/workspace
+      - {PROJECT_NAME}_maven_cache:/root/.m2
     entrypoint: ["tail", "-f", "/dev/null"]
+
+volumes:
+  {PROJECT_NAME}_maven_cache:

@@ -6,6 +6,7 @@ import (
 	"io"
 	"io/fs"
 	"os"
+	"path"
 	"path/filepath"
 	"regexp"
 	"strings"
@@ -270,5 +271,31 @@ func CopyFile(sourcePath, destinationPath string) error {
 		return fmt.Errorf("error copying file from %s to %s: %w", sourcePath, destinationPath, err)
 	}
 
+	return nil
+}
+
+// RenameFilesWithPrefix replaces a prefix in file names and renames them.
+func RenameFilesWithPrefix(filePaths []string, projectHostDir, prefix, newPrefix string) error {
+	for _, filePath := range filePaths {
+		hostFilePath := path.Join(projectHostDir, filePath)
+		renamedFilePath := strings.ReplaceAll(hostFilePath, prefix, newPrefix)
+
+		if err := os.Rename(hostFilePath, renamedFilePath); err != nil {
+			return fmt.Errorf("error renaming file %v to replace prefix %v with %v: %v", hostFilePath, prefix, newPrefix, err)
+		}
+	}
+	return nil
+}
+
+// TrimFileSuffix renames files by removing a specific suffix.
+func TrimFileSuffix(filePaths []string, projectHostDir, suffix string) error {
+	for _, filePath := range filePaths {
+		hostFilePath := path.Join(projectHostDir, filePath)
+		cleanedFilePath := strings.TrimSuffix(hostFilePath, suffix)
+
+		if err := os.Rename(hostFilePath, cleanedFilePath); err != nil {
+			return fmt.Errorf("error removing suffix %v in %v: %v", suffix, hostFilePath, err)
+		}
+	}
 	return nil
 }

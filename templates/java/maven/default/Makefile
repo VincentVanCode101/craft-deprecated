@@ -1,5 +1,5 @@
 # Generic Makefile for Java applications
-JAR_NAME := PROJECT_NAME
+JAR_NAME := {PROJECT_NAME}
 MAIN_CLASS := com.main.App
 SOURCE_DIR := src/main/java
 BUILD_DIR := build
