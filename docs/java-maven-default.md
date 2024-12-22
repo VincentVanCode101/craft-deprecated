@@ -1,12 +1,24 @@
-## Java Maven No Framework Template
+## Java Maven Template
+
+---
 
 ## Overview
-This document describes the files and structure of the `java` template (maven with not dependencies) used by the `Craft` CLI tool. This template creates a lightweight Java project using Maven without any specific frameworks, enabling quick setup and easy customization. It also explains how to get the project up and running in a docker container
 
-### **Steps to Start the Project**
+This document describes the structure and features of the Java Maven template provided by the `Craft` CLI tool. This lightweight template creates a Java project using Maven without specific frameworks, enabling quick setup and easy customization. It also includes instructions for running the project in a Docker container.
 
-#### **1. Build and Start the Docker Environment**
-Use the provided `docker-compose.dev.yml` file to build and start the development container.
+---
+
+## How to Start the Project Using Docker
+
+The Java Maven project template is configured to run in a Docker container, ensuring a consistent and isolated development environment. Follow the steps below to build, start, and interact with the project.
+
+---
+
+### Steps to Start the Project
+
+#### 1. Build and Start the Docker Environment
+
+Use the `docker-compose.dev.yml` file to set up and start the development environment.
 
 - **Build the container:**
   ```bash
@@ -24,129 +36,124 @@ Use the provided `docker-compose.dev.yml` file to build and start the developmen
   ```
   Look for a container named `PROJECT_NAME-java-env`.
 
-#### **2. Connect to the Development Container**
-Once the container is running, connect to it for development purposes.
+#### 2. Connect to the Development Container
+
+Once the container is running, you can connect to it for development purposes.
 
 - **Open a bash session in the container:**
   ```bash
   docker exec -it PROJECT_NAME-java-env bash
   ```
-  - use the `make` command from inside the container now ([see chapter](#build-and-run-with-makefile))
+
+#### 3. Use the Makefile for Project Operations
+
+After connecting to the container, you can use the `Makefile` to build, run, and test the application (see details below).
 
 ---
 
-## Files Created
+## Project Structure and Files
 
-### **Directory Structure**
+The Java Maven template generates the following directory structure and files:
+
 ```
 PROJECT_NAME/
-├── pom.xml # Maven configuration file
-├── src/
-│   ├── main/
-│   │   ├── java/
-│   │   │   └── com/
-│   │   │       └── main/
-│   │   │           └── App.java # Main application entry point
-│   │   └── resources/
-│   │       └── application.properties # Configuration properties
-│   └── test/
-│       └── java/
-│           └── com/
-│               └── main/
-│                   └── AppTest.java # Sample test class
-├── docker-compose.dev.yml  # Docker setup for local development
-├── Makefile                # Build and run commands in Docker
-├── README.md               # Initial project documentation
-├── Dockerfile              # Dockerfile for building and running the application
-├── .dockerignore           # Docker ignore file
-└── .gitignore              # Git ignore file
+├── pom.xml                # Maven configuration file
+├── src/                   # Application source code
+│   ├── main/java/com/main # Main application code
+│   │   └── App.java       # Entry point of the application
+│   └── test/java/com/main # Test cases for the application
+│       └── AppTest.java   # Sample test class
+├── docker-compose.dev.yml # Docker Compose configuration for local development
+├── Dockerfile             # Dockerfile for building and running the application
+├── Makefile               # Build and run commands for the project
+├── README.md              # Initial project documentation
+├── .dockerignore          # Docker ignore file
+└── .gitignore             # Git ignore file
 ```
 
-### **File Descriptions**
+### File Descriptions
 
-#### 1. **pom.xml**
-- The main Maven configuration file.
-- Defines project dependencies, plugins, and build configurations.
+#### pom.xml
+- The main Maven configuration file that defines dependencies, plugins, and build configurations.
 
-#### 2. **src/main/java/com/main/App.java**
-- The entry point of the application.
-- Contains a basic `Hello World` program.
+#### src/main/java/com/main/App.java
+- The entry point of the application with a basic `Hello, World!` program.
 
-#### 3. **src/test/java/com/main/AppTest.java**
+#### src/test/java/com/main/AppTest.java
 - A sample test class to verify the functionality of the application.
 
-#### 4. **docker-compose.dev.yml**
-- Docker Compose file for local development.
-- Sets up a containerized environment for developing the application.
+#### docker-compose.dev.yml
+- Configures a Dockerized development environment for the Java Maven application, defining services and volumes.
 
-#### 5. **Makefile**
-- Simplifies common tasks like building, running, testing, and cleaning up the project in a Dockerized environment.
+#### Dockerfile
+- Contains the instructions for building a Docker image for the Java Maven application.
 
-#### 6. **README.md**
-- Initial documentation for the generated project.
-- Explains how to use the Makefile and other features.
+#### Makefile
+- Provides shortcuts for building, running, and testing the application.
 
-#### 7. **Dockerfile**
-- Builds a Docker image for the Java application.
-- Sets up a containerized environment for running the application.
+#### README.md
+- Initial project documentation with usage instructions.
 
-#### 8. **.dockerignore**
-- Specifies files and directories to exclude from the Docker build context.
-- Optimizes Docker image builds by ignoring unnecessary files.
+#### .dockerignore
+- Specifies files and directories to exclude from the Docker build context, optimizing image builds.
 
-#### 9. **.gitignore**
-- Specifies intentionally untracked files to ignore in the Git repository.
-- Common entries include build artifacts and dependency directories.
+#### .gitignore
+- Specifies files and directories to exclude from the Git repository, such as build artifacts and dependency directories.
 
 ---
 
-## Build and Run with Makefile
+## Using the Makefile
 
-The generated project includes a `Makefile` that simplifies the following operations:
-- can only be used from *inside the container*
+The `Makefile` in the project provides shortcuts for common tasks. All commands should be run from inside the Docker container:
 
-- **Compile the project**:
+- **Compile the project:**
   ```bash
   make
   ```
-- **Build specific Java files**:
+
+- **Build specific Java files:**
   ```bash
   make build ARGS=src/main/java/com/main/foo/bar.java
   ```
-- **Run the application**:
+
+- **Run the application:**
   ```bash
   make run
   ```
-- **Run specific Java files**:
+
+- **Run specific Java files:**
   ```bash
   make run ARGS=src/main/java/com/main/foo/bar.java
   ```
-- **Create an executable JAR**:
+
+- **Create an executable JAR:**
   ```bash
   make uber-jar
   ```
-- **Run the JAR**:
+
+- **Run the JAR:**
   ```bash
   make run-jar
   ```
-- **Execute all tests**:
+
+- **Execute all tests:**
   ```bash
   make test
   ```
-- **Clean up build artifacts**:
+
+- **Clean up build artifacts:**
   ```bash
   make clean
   ```
 
-For full documentation of the Makefile, refer to the `README.md` in the generated project.
-
 ---
 
 ## Notes
-- The default main class is set to `com.main.App`. Update the `MAIN_CLASS` variable in the Makefile if your main class differs.
-- The project name is automatically set during initialization. Update the `JAR_NAME` variable in the Makefile if you want to change the generated JAR's name.
+
+- The default main class is `com.main.App`. Update the `MAIN_CLASS` variable in the `Makefile` if your main class differs.
+- The project name is automatically set during initialization. Update the `JAR_NAME` variable in the `Makefile` if you want to change the generated JAR's name.
 
 ---
-When using the Craft tool, the specified name (when creating a new project) is propagated and used consistently throughout the entire application.
 
-With this template, you can quickly set up a Java Maven project and begin development in a containerized environment with minimal configuration.
+With this template, you can quickly set up and manage a Java Maven project in a containerized environment. Adjust and expand the project to fit your specific development needs.
+
