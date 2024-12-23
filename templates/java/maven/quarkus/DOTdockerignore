@@ -2,7 +2,7 @@
 target/
 Dockerfile
 docker-compose.yml
-docker-compose-dev.yml
+docker-compose.dev.yml
 
 
 !target/*-runner

@@ -217,7 +217,8 @@ func (h *NewJavaHandler) setupQuarkusMavenProject(projectHostDir, projectName st
 		return nil
 	}
 	theirReadmePath := filepath.Join(projectHostDir, "README.md")
-	err = utils.ChangeWordInFile(theirReadmePath, projectName, string(data), false)
+	quarkusPlaceholder := "# " + projectName
+	err = utils.ChangeWordInFile(theirReadmePath, quarkusPlaceholder, string(data), false)
 
 	if err := h.cleanupFiles(projectHostDir, filesThatNeedToBeRemoved); err != nil {
 		return err
