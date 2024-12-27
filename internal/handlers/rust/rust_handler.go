@@ -76,6 +76,7 @@ func (h *NewRustHandler) Run(projectName string) error {
 		return err
 	}
 
+	fmt.Printf("A docker image named 'rust-project-generator:latest' is still on your host and isn't cleaned up (can be done by running: 'docker image rm rust-project-generator:latest')\n Not removing it will speed up the next creation of a rust project immensely")
 	return nil
 }
 

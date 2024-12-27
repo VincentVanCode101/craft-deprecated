@@ -224,6 +224,7 @@ func (h *NewJavaHandler) setupQuarkusMavenProject(projectHostDir, projectName st
 		return err
 	}
 
+	fmt.Printf("A docker image named 'quarkus-project-generator:latest' is still on your host and isn't cleaned up (can be done by running: 'docker image rm quarkus-project-generator:latest')\n Not removing it will speed up the next creation of a java quarkus project immensely")
 	return nil
 }
 
@@ -266,7 +267,8 @@ func (h *NewJavaHandler) setupDefaultMavenProject(projectHostDir, projectName st
 		return err
 	}
 
-	return fmt.Errorf("setting up a plain Java project for Maven is not implemented fully... a docker image named 'maven-project-generator:latest' is on your host and isn't cleaned up (can be done by running: 'docker image rm maven-project-generator:latest')")
+	fmt.Printf("A docker image named 'maven-project-generator:latest' is still on your host and isn't cleaned up (can be done by running: 'docker image rm maven-project-generator:latest')\n Not removing it will speed up the next creation of a java maven project immensely")
+	return nil
 }
 
 func (h *NewJavaHandler) copyTemplateFilesToHost(languageTemplatePath, projectHostDir string) error {

@@ -60,10 +60,6 @@ These problems slow down productivity, create barriers for quickly experimenting
 - **Inspection** (`inspect` command):
   - View all allowed operations and their supported language/framework combinations.
 
-- **Flexible Project Setup**:
-  - Specify a custom project name using the `--name` flag.
-  - View available dependencies for a specific language using the `--show-dependencies` flag.
-
 - **Docker-Ready**:
   - Generated and updated projects are pre-configured to run in Docker containers.
 
@@ -186,7 +182,6 @@ Allowed Operations and Languages:
     ```bash
     craft new java
     ```
-    - `springboot`: Coming soon...
     - `quarkus`: Create a Java projects with the Quarkus framework. ([Documentation](./docs/java-quarkus.md))
 
     **Example**:
@@ -194,6 +189,7 @@ Allowed Operations and Languages:
     ```bash
     craft new java --dependencies quarkus
     ```
+    - `springboot`: Coming soon...
 
 
 </details>
