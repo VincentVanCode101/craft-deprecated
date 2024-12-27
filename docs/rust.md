@@ -22,12 +22,12 @@ Use the `docker-compose.dev.yml` file to set up and start the development enviro
 
 - **Build the container:**
   ```bash
-  docker-compose -f docker-compose.dev.yml build
+  docker compose -f docker-compose.dev.yml build
   ```
 
 - **Start the container:**
   ```bash
-  docker-compose -f docker-compose.dev.yml up -d
+  docker compose -f docker-compose.dev.yml up -d
   ```
 
 - **Confirm the container is running:**

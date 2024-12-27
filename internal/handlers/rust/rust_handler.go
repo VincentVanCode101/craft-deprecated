@@ -23,7 +23,7 @@ var (
 	filesThatNeedProjectNameAdjustedOnce       = []string{"Makefile"}
 	filesThatNeedProjectNameAdjustedEverywhere = []string{"README.md", "docker-compose.dev.yml"}
 	filesThatNeedToBeRemoved                   = []string{"build.Dockerfile", "create_rust_project.sh"}
-	filesThatNeedToBeRemovedInTheRustFolder    = []string{".gitignore", ".git"} // .gitignore & .git since cargo creates there own .gitignore and .git directory (their .gitignore has to be removed before ours is copied over (we want our in the final project))
+	filesThatNeedToBeRemovedInTheRustFolder    = []string{".gitignore", ".git"} // .gitignore & .git since cargo creates there own .gitignore and .git directory (their stuff has to be removed before ours is copied over (we want ours in the final project))
 )
 
 func (h *NewRustHandler) Run(projectName string) error {
@@ -60,6 +60,15 @@ func (h *NewRustHandler) Run(projectName string) error {
 	}
 
 	if err := h.adjustProjectNames(projectHostDir, filesThatNeedProjectNameAdjustedOnce, filesThatNeedProjectNameAdjustedEverywhere, projectName); err != nil {
+		return err
+	}
+
+	dotFileCandidates, err := utils.ListFilesWithPattern(h.TemplatesFileSystem, languageTemplatePath, constants.DotFileNotationPrefix)
+	if err != nil {
+		return err
+	}
+	if err := utils.RenameFilesWithPrefix(dotFileCandidates, projectHostDir, constants.DotFileNotationPrefix, constants.DotFilePrefix); err != nil {
+		fmt.Printf("Error renaming dot files: %v\n", err)
 		return err
 	}
 

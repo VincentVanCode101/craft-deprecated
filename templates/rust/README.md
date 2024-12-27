@@ -11,12 +11,12 @@ Use the provided `docker-compose.dev.yml` file to create and start the developme
 
 - **Build the container:**
   ```bash
-  docker-compose -f docker-compose.dev.yml build
+  docker compose -f docker-compose.dev.yml build
   ```
 
 - **Start the container:**
   ```bash
-  docker-compose -f docker-compose.dev.yml up -d
+  docker compose -f docker-compose.dev.yml up -d
   ```
 
 - **Confirm the container is running:**
