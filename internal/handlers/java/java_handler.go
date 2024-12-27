@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"io/fs"
 	"os"
-	"os/exec"
 	"path/filepath"
 	"strings"
 )
@@ -174,7 +173,7 @@ func (h *NewJavaHandler) handleGradleProject() error {
 }
 
 func (h *NewJavaHandler) setupQuarkusMavenProject(projectHostDir, projectName string) error {
-	filesThatNeedProjectNameAdjustedOnce := []string{} // Add a Makefile?
+	filesThatNeedProjectNameAdjustedOnce := []string{"Makefile"}
 	filesThatNeedProjectNameAdjustedEverywhere := []string{"partialREADME.md", "docker-compose.dev.yml"}
 	filesThatNeedToBeRemoved := []string{"build.Dockerfile", "create_java_project.sh", "partialREADME.md"}
 	filesThatNeedToBeRemovedInTheJavaFolder := []string{".dockerignore"} // .dockerignore is added since quarkus creates there own .dockerignore, which has to be removed before ours is copied over (we want our in the final project)
@@ -217,15 +216,15 @@ func (h *NewJavaHandler) setupQuarkusMavenProject(projectHostDir, projectName st
 	if err != nil {
 		return nil
 	}
-
 	theirReadmePath := filepath.Join(projectHostDir, "README.md")
-
-	err = utils.ChangeWordInFile(theirReadmePath, projectName, string(data), false)
+	quarkusPlaceholder := "# " + projectName
+	err = utils.ChangeWordInFile(theirReadmePath, quarkusPlaceholder, string(data), false)
 
 	if err := h.cleanupFiles(projectHostDir, filesThatNeedToBeRemoved); err != nil {
 		return err
 	}
 
+	fmt.Printf("A docker image named 'quarkus-project-generator:latest' is still on your host and isn't cleaned up (can be done by running: 'docker image rm quarkus-project-generator:latest')\n Not removing it will speed up the next creation of a java quarkus project immensely")
 	return nil
 }
 
@@ -234,7 +233,10 @@ func (h *NewJavaHandler) setupDefaultMavenProject(projectHostDir, projectName st
 	filesThatNeedProjectNameAdjustedEverywhere := []string{"README.md", "docker-compose.dev.yml"}
 	filesThatNeedToBeRemoved := []string{"build.Dockerfile", "create_java_project.sh"}
 
+	javaProjectPath := filepath.Join(projectHostDir, projectName)
+
 	languageTemplatePath := filepath.Join("templates", h.Language, h.BuildTool, "default")
+
 	if err := h.copyTemplateFilesToHost(languageTemplatePath, projectHostDir); err != nil {
 		return err
 	}
@@ -244,11 +246,6 @@ func (h *NewJavaHandler) setupDefaultMavenProject(projectHostDir, projectName st
 		return err
 	}
 
-	if err := h.cleanupFiles(projectHostDir, filesThatNeedToBeRemoved); err != nil {
-		return err
-	}
-
-	javaProjectPath := filepath.Join(projectHostDir, projectName)
 	if err := utils.CopyAllOnePathUpAndRemoveDir(javaProjectPath); err != nil {
 		return err
 	}
@@ -257,7 +254,6 @@ func (h *NewJavaHandler) setupDefaultMavenProject(projectHostDir, projectName st
 	if err != nil {
 		return err
 	}
-
 	if err := utils.RenameFilesWithPrefix(dotFileCandidates, projectHostDir, constants.DotFileNotationPrefix, constants.DotFilePrefix); err != nil {
 		fmt.Printf("Error renaming dot files: %v\n", err)
 		return err
@@ -267,7 +263,12 @@ func (h *NewJavaHandler) setupDefaultMavenProject(projectHostDir, projectName st
 		return err
 	}
 
-	return fmt.Errorf("setting up a plain Java project for Maven is not implemented fully... a docker image named 'maven-project-generator:latest' is on your host and isn't cleaned up (can be done by running: 'docker image rm maven-project-generator:latest')")
+	if err := h.cleanupFiles(projectHostDir, filesThatNeedToBeRemoved); err != nil {
+		return err
+	}
+
+	fmt.Printf("A docker image named 'maven-project-generator:latest' is still on your host and isn't cleaned up (can be done by running: 'docker image rm maven-project-generator:latest')\n Not removing it will speed up the next creation of a java maven project immensely")
+	return nil
 }
 
 func (h *NewJavaHandler) copyTemplateFilesToHost(languageTemplatePath, projectHostDir string) error {
@@ -278,19 +279,7 @@ func (h *NewJavaHandler) copyTemplateFilesToHost(languageTemplatePath, projectHo
 }
 
 func (h *NewJavaHandler) executeProjectSetupScript(scriptPath, projectName, projectHostDir string) error {
-	if err := os.Chmod(scriptPath, 0771); err != nil {
-		return fmt.Errorf("error setting execute permissions on script: %v", err)
-	}
-
-	execCmd := exec.Command(scriptPath, projectName)
-	execCmd.Stdout = os.Stdout
-	execCmd.Stderr = os.Stderr
-	execCmd.Dir = projectHostDir
-
-	if err := execCmd.Run(); err != nil {
-		return fmt.Errorf("error executing setup script: %v", err)
-	}
-	return nil
+	return utils.ExecuteScript(scriptPath, projectHostDir, projectName)
 }
 
 func (h *NewJavaHandler) cleanupFiles(projectHostDir string, files []string) error {

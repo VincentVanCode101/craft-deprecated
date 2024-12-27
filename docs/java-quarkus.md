@@ -11,9 +11,9 @@ This template supports running the Quarkus application in a Docker container to 
 
 ---
 
-### **Steps to Start the Project**
+### Steps to Start the Project
 
-#### **1. Build and Start the Docker Environment**
+#### 1. Build and Start the Docker Environment
 Use the provided `docker-compose.dev.yml` file to create and start the development container.
 
 - **Build the container:**
@@ -32,7 +32,7 @@ Use the provided `docker-compose.dev.yml` file to create and start the developme
   ```
   Look for a container named `PROJECT_NAME-quarkus-env`.
 
-#### **2. Connect to the Development Container**
+#### 2. Connect to the Development Container
 Once the container is running, connect to it for further development.
 
 - **Open a bash session in the container:**
@@ -40,8 +40,12 @@ Once the container is running, connect to it for further development.
   docker exec -it PROJECT_NAME-quarkus-env bash
   ```
 
-#### **3. Use the Makefile for Project Operations**
-After connecting to the container, you can use the `Makefile` for common tasks such as building, running, and testing the application.
+
+#### 3. Use the Makefile for Project Operations
+
+After connecting to the container, you can use the `Makefile` to build, run, and test the application (see details below).
+
+
 
 ---
 

@@ -1,29 +1,33 @@
-## Go Template
+## Go Project Template
+
+---
 
 ## Overview
-This document describes the files and structure of the Go template provided by the `Craft` CLI tool. This template sets up a Go project with essential configuration files, Docker support, and a Makefile for streamlined development. It also explains how to get the project up and running in a docker container
+
+This document describes the structure and features of the Go project template provided by the `Craft` CLI tool. This template sets up a Go project with essential configurations, Docker support, and a Makefile for streamlined development. It also includes instructions for running the project in a Docker container.
 
 ---
 
-### **How to Start the Project Using Docker**
+## How to Start the Project Using Docker
 
-This project is configured to run inside a Docker container for consistent development environments. Follow the steps below to set up, start, and use the project.
+The Go project template is configured to run in a Docker container, ensuring a consistent and isolated development environment. Follow the steps below to build, start, and interact with the project.
 
 ---
 
-### **Steps to Start the Project**
+### Steps to Start the Project
 
-#### **1. Build and Start the Docker Environment**
-Use the provided `docker-compose.dev.yml` file to build and start the development container.
+#### 1. Build and Start the Docker Environment
+
+Use the `docker-compose.dev.yml` file to set up and start the development environment.
 
 - **Build the container:**
   ```bash
-  docker-compose -f docker-compose.dev.yml build
+  docker compose -f docker-compose.dev.yml build
   ```
 
 - **Start the container:**
   ```bash
-  docker-compose -f docker-compose.dev.yml up -d
+  docker compose -f docker-compose.dev.yml up -d
   ```
 
 - **Confirm the container is running:**
@@ -32,19 +36,25 @@ Use the provided `docker-compose.dev.yml` file to build and start the developmen
   ```
   Look for a container named `PROJECT_NAME-go-compiler`.
 
-#### **2. Connect to the Development Container**
-Once the container is running, connect to it for development purposes.
+#### 2. Connect to the Development Container
+
+Once the container is running, you can connect to it for development purposes.
 
 - **Open a bash session in the container:**
   ```bash
   docker exec -it PROJECT_NAME-go-compiler bash
   ```
 
+#### 3. Use the Makefile for Project Operations
+
+After connecting to the container, you can use the `Makefile` to build, run, and test the application (see details below).
+
 ---
 
-## Files Created
+## Project Structure and Files
 
-### **Directory Structure**
+The Go project template generates the following directory structure and files:
+
 ```
 PROJECT_NAME/
 ├── .gitignore              # Git ignore file
@@ -58,74 +68,71 @@ PROJECT_NAME/
 └── pre-commit              # Pre-commit hook for code quality checks
 ```
 
-### **File Descriptions**
+### File Descriptions
 
-#### 1. **.gitignore**
-- Specifies intentionally untracked files to ignore in the Git repository.
-- Common entries include build artifacts and dependency directories.
+#### .gitignore
+- Specifies files and directories to exclude from the Git repository, such as build artifacts and dependency directories.
 
-#### 2. **.dockerignore**
-- Specifies files and directories to exclude from the Docker build context.
-- Optimizes Docker image builds by ignoring unnecessary files.
+#### .dockerignore
+- Specifies files and directories to exclude from the Docker build context, optimizing Docker image builds.
 
-#### 3. **docker-compose.dev.yml**
-- Configures a Dockerized development environment for the Go application.
-- Defines services and volumes for containerized development.
+#### docker-compose.dev.yml
+- Configures a Dockerized development environment for the Go application, defining services and volumes.
 
-#### 4. **Dockerfile**
-- Builds a Docker image for the Go application.
-- Sets up a containerized environment for running the application.
+#### Dockerfile
+- Contains the instructions for building a Docker image for the Go application.
 
-#### 5. **go.mod**
-- The `go.mod` file defines the module name and dependencies.
-- The module name is dynamically replaced with the project name during initialization.
+#### go.mod
+- Defines the module name and dependencies for the Go project. The module name is dynamically set during initialization.
 
-#### 6. **go.sum**
-- The `go.sum` file provides checksums for module dependencies.
+#### go.sum
+- Provides checksums for module dependencies to ensure consistency.
 
-#### 7. **main.go**
-- The main entry point of the Go application.
-- Includes a simple `Hello, World!` program as a starting point.
+#### main.go
+- The main entry point for the application, starting with a basic `Hello, World!` program.
 
-#### 8. **Makefile**
-- Simplifies common operations for Go projects, such as building, running, and testing the application.
+#### Makefile
+- Simplifies common development tasks like building, running, testing, and cleaning the application.
 
-#### 9. **pre-commit**
-- A pre-commit hook to enforce code quality and formatting checks.
-- Can be linked into the Git hooks directory for automatic execution before commits.
+#### pre-commit
+- A hook to enforce code quality and formatting checks before commits.
 
 ---
 
 ## Using the Makefile
 
-The generated project includes a `Makefile` to streamline development tasks:
+The `Makefile` in the project provides shortcuts for common tasks:
 
-- **Build the application**:
+- **Build the application:**
   ```bash
   make build
   ```
-- **Run the application**:
+
+- **Run the application:**
   ```bash
   make run
   ```
-- **Run tests**:
+
+- **Run tests:**
   ```bash
   make test
   ```
-- **Clean build artifacts**:
+
+- **Clean build artifacts:**
   ```bash
   make clean
   ```
 
-For full documentation of the Makefile, refer to the `README.md` in the generated project.
+Refer to the `README.md` in the generated project for detailed Makefile documentation.
 
 ---
 
 ## Notes
-- The `go.mod` and `go.sum` files are customized during initialization to include the project name.
-- The `main.go` file serves as the starting point for your application; modify it as needed to suit your requirements.
+
+- The `go.mod` file is customized during initialization to include the project name.
+- The `main.go` file serves as the starting point for your application. Modify it as needed to suit your project’s requirements.
 
 ---
 
+With this template, you can quickly set up and manage a Go project with minimal configuration effort. Modify and expand the project to meet your development needs.
 
-With this template, you can quickly set up and manage a Go project with minimal configuration effort.
