@@ -143,7 +143,7 @@ Allowed Operations and Languages:
 # 🌐Supported Languages
 
 <h2 style="display: flex; align-items: center; gap: 10px; font-size: 2rem; font-weight: bold; line-height: 1;">
-  Go <img src="./assets/gopher.png" alt="Go Logo" style="height: 3rem;"/>
+  Go <img src="./assets/gopher.png" alt="Go Logo" style="height: 2rem;"/>
 </h2>
 
 <details>
@@ -167,7 +167,7 @@ Allowed Operations and Languages:
 </details>
 
 <h2 style="display: flex; align-items: center; gap: 10px; font-size: 2rem; font-weight: bold; line-height: 1;">
-  Java <img src="./assets/java.svg" alt="Go Logo" style="height: 3rem;"/>
+  Java <img src="./assets/java.svg" alt="Go Logo" style="height: 2rem;"/>
 </h2>
 
 <details>
@@ -195,7 +195,7 @@ Allowed Operations and Languages:
 </details>
 
 <h2 style="display: flex; align-items: center; gap: 10px; font-size: 2rem; font-weight: bold; line-height: 1;">
-  Rust <img src="./assets/rust-crab.png" alt="Rust Crab Logo" style="height: 3rem;"/>
+  Rust <img src="./assets/rust-crab.png" alt="Rust Crab Logo" style="height: 2rem;"/>
 </h2>
 
 <details>
