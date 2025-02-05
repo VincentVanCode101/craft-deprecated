@@ -1,5 +1,6 @@
 crafter
 craft
+craft-deprecated
 craft-native
 stuff
 
@@ -29,7 +30,6 @@ tmp/
 # Project build
 main
 *templ.go
-
 
 # Eclipse
 .project

@@ -3,13 +3,13 @@
 # Script to extract the craft binary from a built Docker image,
 # copy it to the project directory, and create a symlink in /usr/local/bin.
 
-set -e  # Exit on any error
+set -e # Exit on any error
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 readonly IMAGE_NAME="craft-exec:latest"
-readonly BINARY_NAME="craft"
+readonly BINARY_NAME="craft-deprecated"
 readonly LOCAL_BIN="/usr/local/bin"
-readonly SYMLINK_NAME="craft"
+readonly SYMLINK_NAME="craft-deprecated"
 
 # Load utility functions
 source "$SCRIPT_DIR/utils.sh"
